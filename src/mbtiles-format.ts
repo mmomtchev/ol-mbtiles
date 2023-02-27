@@ -1,0 +1,155 @@
+import Protobuf from 'pbf';
+import { VectorTile, VectorTileFeature } from '@mapbox/vector-tile';
+import * as pako from 'pako';
+
+import FeatureFormat, { ReadOptions } from 'ol/format/Feature';
+import Projection from 'ol/proj/Projection';
+import RenderFeature from 'ol/render/Feature';
+import { Extent } from 'ol/extent';
+import { FeatureLike } from 'ol/Feature';
+import { Geometry } from 'ol/geom';
+import { ProjectionLike, get as getProjection } from 'ol/proj';
+
+declare module '@mapbox/vector-tile' {
+  interface VectorTileFeature {
+    toGeoJSON(x: number, y: number, z: number, project?: (xy: [number, number]) => [number, number]): GeoJSON.Feature;
+  }
+}
+
+export type Options = Record<string, never>;
+
+/*
+const xform = proj4('EPSG:4326', 'EPSG:4326');
+const project = ([x, y]: [number, number]) => xform.forward([
+  x * opts.metadata.tile_dimension_zoom_0 + opts.metadata.tile_origin_upper_left_x,
+  opts.metadata.tile_origin_upper_left_y - y * opts.metadata.tile_dimension_zoom_0
+]) as [number, number];
+*/
+const project = ([x, y]: [number, number]) => [
+  x * 360 - 180,
+  90 - y * 360
+] as [number, number];
+
+let featureUid = 1;
+
+export class MBTilesFormat extends FeatureFormat {
+  dataProjection: Projection;
+  private featureClass_: typeof RenderFeature;
+  private geometryName_: string;
+  private layers_: string[] | null;
+  private idProperty_: string;
+  private layerName_: string;
+  supportedMediaTypes: string[];
+  extent: number;
+  static MBTypes = [
+    'Unknown', 'Point', 'LineString', 'Polygon'
+  ] as ('Unknown' | 'Point' | 'LineString' | 'Polygon')[];
+
+  constructor(options?: Options) {
+    super();
+
+    options = options ? options : {};
+
+    this.dataProjection = new Projection({
+      code: '',
+      units: 'tile-pixels',
+    });
+
+    this.featureClass_ = options.featureClass ? options.featureClass : RenderFeature;
+    this.geometryName_ = options.geometryName ?? 'Geometry';
+    this.layers_ = options.layers ?? null;
+    this.idProperty_ = options.idProperty_;
+    this.extent = options.extent ?? 4096;
+
+    /**
+     * As this is the very first time MBTiles will be distributed by HTTP
+     * there is still no official MIME type
+     */
+    this.supportedMediaTypes = [
+      'application/vnd-mbtiles'
+    ];
+  }
+
+  projectPoint(coords: number[], featureProjection: ProjectionLike): number[] {
+    const projection = getProjection(featureProjection);
+
+    return [coords[0] / this.extent, coords[1] / this.extent];
+  }
+
+  readFeature(source: VectorTileFeature, options?: ReadOptions): FeatureLike {
+    const properties = source.properties;
+
+    let id: string | number;
+    if (!this.idProperty_) {
+      id = source.id;
+    } else {
+      id = properties[this.idProperty_] as string | number;
+      delete properties[this.idProperty_];
+    }
+    const points = source.loadGeometry();
+    const flatCoordinates = [] as number[];
+    const ends = [] as number[];
+
+    switch (source.type) {
+      case 1:
+        ends.push(0);
+        for (let i = 0; i < points.length; i++)
+          flatCoordinates.push(points[i][0].x, points[i][0].y);
+        break;
+
+      case 2:
+        for (let i = 0; i < points.length; i++) {
+          ends.push(flatCoordinates.length);
+          for (let j = 0; j < points[i].length; i++)
+            flatCoordinates.push(points[i][j].x, points[i][j].y);
+        }
+        break;
+
+      case 3:
+        for (let i = 0; i < points.length; i++) {
+          ends.push(flatCoordinates.length);
+          for (let j = 0; j < points[i].length; i++)
+            flatCoordinates.push(points[i][j].x, points[i][j].y);
+        }
+        break;
+    }
+
+    let type = MBTilesFormat.MBTypes[source.type];
+    if (type === 'Unknown')
+      return null;
+
+    const feature = new this.featureClass_(type, flatCoordinates, ends, properties, id);
+    feature.transform(options.dataProjection);
+    
+    return feature;
+  }
+
+  readFeatures(source: ArrayBuffer, options?: ReadOptions): FeatureLike[] {
+    const layers = this.layers_;
+
+    const features: FeatureLike[] = [];
+    const tile = new VectorTile(new Protobuf(pako.ungzip(source)));
+    options = this.adaptOptions(options);
+    const dataProjection = getProjection(options.dataProjection);
+    dataProjection.setWorldExtent(options.extent);
+    dataProjection.setExtent([0, 0, this.extent, this.extent]);
+    options.dataProjection = dataProjection;
+
+    for (const layerName of Object.keys(tile.layers)) {
+      if (layers && !layers.includes(layerName)) {
+        continue;
+      } const l = tile.layers[layerName];
+      for (let idx = 0; idx < l.length; idx++) {
+        const vectorFeature = l.feature(idx);
+        features.push(this.readFeature(vectorFeature, options));
+      }
+    }
+
+    return features;
+  }
+
+  readProjection(source) {
+    return this.dataProjection;
+  }
+
+}
