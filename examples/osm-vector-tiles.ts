@@ -26,7 +26,7 @@ export default function () {
       }),
       new VectorTileLayer({
         source: new MBTilesSource({
-          url: 'https://velivole.b-cdn.net/mbtiles/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
+          url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
           layers: ['transportation', 'water', 'waterway'],
           maxZoom: 14,
           minZoom: 0,
