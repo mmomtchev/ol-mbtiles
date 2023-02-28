@@ -15,3 +15,14 @@ The current conclusion is that this can work rather well and has a bandwidth ove
 Still, it is a potentially very useful tool that will open many new possibilities.
 
 **Currently there is only a vector tile driver, raster support is planned at a later stage**
+
+# SQLite optimization
+
+Don't forget to prepare your SQLite tables (otherwise it will still work, but much slower):
+
+```
+$ sqlite3 yourtiles.mbtiles
+sqlite> pragma journal_mode = delete;
+sqlite> pragma page_size = 1024;
+sqlite> vacuum;
+```
