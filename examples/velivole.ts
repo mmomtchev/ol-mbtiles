@@ -27,6 +27,7 @@ export default function () {
           url: 'https://velivole.b-cdn.net/mbtiles/place/0.mbtiles'
         }),
         style: styleTown.bind(null, 0),
+        renderBuffer: 1024,
         minZoom: 6
       }),
       new VectorTileLayer({
@@ -34,6 +35,7 @@ export default function () {
           url: 'https://velivole.b-cdn.net/mbtiles/place/1.mbtiles'
         }),
         style: styleTown.bind(null, 1),
+        renderBuffer: 256,
         minZoom: 8
       }),
       new VectorTileLayer({
