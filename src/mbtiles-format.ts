@@ -90,37 +90,29 @@ export class MBTilesFormat extends FeatureFormat {
     const flatCoordinates = [] as number[];
     const ends = [] as number[];
 
+    let type = MBTilesFormat.MBTypes[source.type];
+    if (type === 'Unknown')
+      return null;
+
     switch (source.type) {
       case 1:
         ends.push(0);
-        for (let i = 0; i < points.length; i++)
-          flatCoordinates.push(points[i][0].x, points[i][0].y);
+        flatCoordinates.push(points[0][0].x, points[0][0].y);
         break;
 
       case 2:
-        for (let i = 0; i < points.length; i++) {
-          ends.push(flatCoordinates.length);
-          for (let j = 0; j < points[i].length; i++)
-            flatCoordinates.push(points[i][j].x, points[i][j].y);
-        }
-        break;
-
       case 3:
         for (let i = 0; i < points.length; i++) {
           ends.push(flatCoordinates.length);
-          for (let j = 0; j < points[i].length; i++)
+          for (let j = 0; j < points[i].length; j++)
             flatCoordinates.push(points[i][j].x, points[i][j].y);
         }
         break;
     }
 
-    let type = MBTilesFormat.MBTypes[source.type];
-    if (type === 'Unknown')
-      return null;
-
     const feature = new this.featureClass_(type, flatCoordinates, ends, properties, id);
     feature.transform(options.dataProjection);
-    
+
     return feature;
   }
 
