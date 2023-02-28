@@ -26,3 +26,10 @@ sqlite> pragma journal_mode = delete;
 sqlite> pragma page_size = 1024;
 sqlite> vacuum;
 ```
+
+# Try the demo
+
+* Checkout the code
+* `npm install`
+* `webpack serve --mode=development`
+* Open `http://localhost:9000`
