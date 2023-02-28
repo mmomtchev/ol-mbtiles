@@ -1,6 +1,3 @@
-import 'ol/ol.css';
-import './style.css';
-
 import Map from 'ol/Map.js';
 import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
@@ -10,7 +7,7 @@ import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
 import { MBTilesSource } from 'ol-mbtiles';
-import { styleTown } from './style';
+import { styleTown } from '../style';
 
 export default function () {
   const map = new Map({

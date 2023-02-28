@@ -4,9 +4,19 @@ body {
   height: 100%;
 }
 
-#map, #example, #main {
+#map, #main {
   width: 100%;
   height: 100vh;
+}
+
+#example {
+  width: 50%;
+}
+
+#text {
+  width: 40vw;
+  height: 100vh;
+  overflow: scroll;
 }
 
 .menu {

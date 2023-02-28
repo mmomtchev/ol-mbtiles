@@ -1,6 +1,3 @@
-import 'ol/ol.css';
-import './style.css';
-
 import Map from 'ol/Map.js';
 import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
@@ -10,7 +7,7 @@ import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
 import { MBTilesSource } from 'ol-mbtiles';
-import { waterStyle, roadStyle, buildingStyle } from './style';
+import { waterStyle, roadStyle, buildingStyle } from '../style';
 
 // MBTiles from
 // https://data.maptiler.com/downloads/dataset/osm/europe/
