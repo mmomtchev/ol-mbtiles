@@ -62,12 +62,6 @@ export class MBTilesFormat extends FeatureFormat {
     ];
   }
 
-  projectPoint(coords: number[], featureProjection: ProjectionLike): number[] {
-    const projection = getProjection(featureProjection);
-
-    return [coords[0] / this.extent, coords[1] / this.extent];
-  }
-
   readFeature(source: VectorTileFeature, options?: ReadOptions): FeatureLike {
     const properties = source.properties;
 
@@ -86,20 +80,11 @@ export class MBTilesFormat extends FeatureFormat {
     if (type === 'Unknown')
       return null;
 
-    switch (source.type) {
-      case 1:
-        ends.push(0);
-        flatCoordinates.push(points[0][0].x, points[0][0].y);
-        break;
-
-      case 2:
-      case 3:
-        for (let i = 0; i < points.length; i++) {
-          ends.push(flatCoordinates.length);
-          for (let j = 0; j < points[i].length; j++)
-            flatCoordinates.push(points[i][j].x, points[i][j].y);
-        }
-        break;
+    for (let i = 0; i < points.length; i++) {
+      for (let j = 0; j < points[i].length; j++) {
+        flatCoordinates.push(points[i][j].x, points[i][j].y);
+      }
+      ends.push(flatCoordinates.length);
     }
 
     const feature = new this.featureClass_(type, flatCoordinates, ends, properties, id);
@@ -122,7 +107,8 @@ export class MBTilesFormat extends FeatureFormat {
     for (const layerName of Object.keys(tile.layers)) {
       if (layers && !layers.includes(layerName)) {
         continue;
-      } const l = tile.layers[layerName];
+      }
+      const l = tile.layers[layerName];
       for (let idx = 0; idx < l.length; idx++) {
         const vectorFeature = l.feature(idx);
         const feature = this.readFeature(vectorFeature, options);

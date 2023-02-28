@@ -92,7 +92,7 @@ export class MBTilesSource extends VectorTileSource {
   }
 
   tileLoader(tile: VectorTile, url: string) {
-    console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]);
+    console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       Promise.all([this.worker, this.metadata])
         .then(([w]) =>
