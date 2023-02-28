@@ -57,4 +57,53 @@ export const styleBorder = new Style({
     color: 'blue',
     width: 2
   })
-})
+});
+
+
+// Styles from https://openlayers.org/en/latest/examples/osm-vector-tiles.html
+const roadStyleCache = {};
+const roadColor = {
+  'major_road': '#776',
+  'minor_road': '#ccb',
+  'highway': '#f39',
+};
+export const buildingStyle = new Style({
+  fill: new Fill({
+    color: '#666'
+  }),
+  stroke: new Stroke({
+    color: '#444',
+    width: 1,
+  }),
+});
+export const waterStyle = new Style({
+  fill: new Fill({
+    color: '#9db9e8',
+  }),
+});
+export const roadStyle = function (feature) {
+  const kind = feature.get('kind');
+  const railway = feature.get('railway');
+  const sort_key = feature.get('sort_key');
+  const styleKey = kind + '/' + railway + '/' + sort_key;
+  let style = roadStyleCache[styleKey];
+  if (!style) {
+    let color, width;
+    if (railway) {
+      color = '#7de';
+      width = 1;
+    } else {
+      color = roadColor[kind];
+      width = kind == 'highway' ? 1.5 : 1;
+    }
+    style = new Style({
+      stroke: new Stroke({
+        color: color,
+        width: width,
+      }),
+      zIndex: sort_key,
+    });
+    roadStyleCache[styleKey] = style;
+  }
+  return style;
+};

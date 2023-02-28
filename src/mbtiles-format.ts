@@ -16,21 +16,13 @@ declare module '@mapbox/vector-tile' {
   }
 }
 
-export type Options = Record<string, never>;
-
-/*
-const xform = proj4('EPSG:4326', 'EPSG:4326');
-const project = ([x, y]: [number, number]) => xform.forward([
-  x * opts.metadata.tile_dimension_zoom_0 + opts.metadata.tile_origin_upper_left_x,
-  opts.metadata.tile_origin_upper_left_y - y * opts.metadata.tile_dimension_zoom_0
-]) as [number, number];
-*/
-const project = ([x, y]: [number, number]) => [
-  x * 360 - 180,
-  90 - y * 360
-] as [number, number];
-
-let featureUid = 1;
+export interface Options {
+  layers?: string[];
+  featureClass?: typeof RenderFeature;
+  geometryName?: string;
+  idProperty?: string;
+  extent?: number;
+};
 
 export class MBTilesFormat extends FeatureFormat {
   dataProjection: Projection;
@@ -58,7 +50,7 @@ export class MBTilesFormat extends FeatureFormat {
     this.featureClass_ = options.featureClass ? options.featureClass : RenderFeature;
     this.geometryName_ = options.geometryName ?? 'Geometry';
     this.layers_ = options.layers ?? null;
-    this.idProperty_ = options.idProperty_;
+    this.idProperty_ = options.idProperty;
     this.extent = options.extent ?? 4096;
 
     /**
@@ -133,7 +125,9 @@ export class MBTilesFormat extends FeatureFormat {
       } const l = tile.layers[layerName];
       for (let idx = 0; idx < l.length; idx++) {
         const vectorFeature = l.feature(idx);
-        features.push(this.readFeature(vectorFeature, options));
+        const feature = this.readFeature(vectorFeature, options);
+        feature.getProperties().layer = layerName;
+        features.push(feature);
       }
     }
 

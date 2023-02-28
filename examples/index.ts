@@ -1,5 +1,6 @@
 import home from './velivole';
 import klokantech from './klokantech';
+import osm from './osm-vector-tiles';
 
 $('.menu-btn').on('click', (ev) => {
   $('#example').html('<div id="map"></div>');
@@ -10,6 +11,10 @@ $('.menu-btn').on('click', (ev) => {
 
     case 'klokantech':
       klokantech();
+      break;
+
+    case 'osm':
+      osm();
       break;
   }
 });

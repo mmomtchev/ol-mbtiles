@@ -19,6 +19,7 @@ export interface Options {
   extent?: Extent;
   overlaps?: boolean;
   projection?: ProjectionLike;
+  minZoom?: number;
   maxZoom?: number;
   tileSize?: number;
   maxResolution?: number;
@@ -26,6 +27,7 @@ export interface Options {
   url: string;
   transition?: number;
   wrapX?: boolean;
+  layers?: string[];
 }
 
 const workerUrl = new URL(
@@ -46,7 +48,9 @@ export class MBTilesSource extends VectorTileSource {
     super({
       ...options,
       url: undefined,
-      format: new MBTilesFormat(),
+      format: new MBTilesFormat({
+        layers: options.layers
+      }),
       tileLoadFunction: (tile: VectorTile, url: string) => this.tileLoader(tile, url),
       // This is required to prevent Openlayers' cache from thinking that all tiles share the same URL
       tileUrlFunction: (coords: TileCoord) => `${coords[0]}:${coords[1]}:${coords[2]}`
