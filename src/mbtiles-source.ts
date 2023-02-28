@@ -3,7 +3,7 @@ import { SplitFileConfigPure } from 'sql.js-httpvfs/dist/sqlite.worker';
 
 import { Extent } from 'ol/extent';
 import { ProjectionLike } from 'ol/proj';
-import VectorTileSource from 'ol/source/VectorTile.js';
+import VectorTileSource, { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
 import VectorTile from 'ol/VectorTile';
 import { TileCoord } from 'ol/tilecoord';
 import TileGrid from 'ol/tilegrid/TileGrid';
@@ -12,21 +12,9 @@ import { Geometry } from 'ol/geom';
 
 import { MBTilesFormat } from './mbtiles-format';
 
-export interface Options {
-  attributionsCollapsible?: boolean;
+export interface Options extends VectorTileOptions {
   tileCacheSize?: number;
   sqlCacheSize?: number;
-  extent?: Extent;
-  overlaps?: boolean;
-  projection?: ProjectionLike;
-  minZoom?: number;
-  maxZoom?: number;
-  tileSize?: number;
-  maxResolution?: number;
-  tileGrid?: TileGrid;
-  url: string;
-  transition?: number;
-  wrapX?: boolean;
   layers?: string[];
 }
 
@@ -41,8 +29,14 @@ const wasmUrl = new URL(
 
 const maxBytesToRead = 10 * 1024 * 1024;
 
+interface Metadata {
+  minzoom: number;
+  maxzoom: number;
+};
+
 export class MBTilesSource extends VectorTileSource {
   worker: Promise<WorkerHttpvfs>;
+  metadata: Promise<Metadata | null>;
 
   constructor(options: Options) {
     super({
@@ -51,10 +45,11 @@ export class MBTilesSource extends VectorTileSource {
       format: new MBTilesFormat({
         layers: options.layers
       }),
-      tileLoadFunction: (tile: VectorTile, url: string) => this.tileLoader(tile, url),
       // This is required to prevent Openlayers' cache from thinking that all tiles share the same URL
       tileUrlFunction: (coords: TileCoord) => `${coords[0]}:${coords[1]}:${coords[2]}`
     });
+
+    this.setTileLoadFunction(this.tileLoader.bind(this));
 
     const config = {
       from: 'inline',
@@ -71,17 +66,38 @@ export class MBTilesSource extends VectorTileSource {
       wasmUrl.toString(),
       maxBytesToRead
     );
+
+    this.metadata = this.worker
+      .then((w) => w.db.query('SELECT name,value FROM metadata WHERE name="maxzoom" or name="minzoom"'))
+      .then((r) => {
+        // Alas, at the moment it is not possible to replace the TileGrid after constructing the layer
+        if (r && r.length == 2) {
+          const data = r.reduce((a, x) => {
+            a[x['name']] = x['value'];
+            return a;
+          }, {}) as Record<string, number>;
+          console.debug('Loaded metadata', data);
+          if (options.maxZoom != data.maxzoom || options.minZoom != data.minzoom) {
+            console.warn(`minZoom/maxZoom ${data.minzoom}/${data.maxzoom}` + 
+            ` of retrieved MBTiles do not match Openlayers configuration ${options.minZoom}/${options.maxZoom}`);
+          }
+          return data as unknown as Metadata;
+        }
+        throw new Error('Could not load metadata');
+      })
+      .catch(e => {
+        console.warn(e);
+        return null;
+      });
   }
 
   tileLoader(tile: VectorTile, url: string) {
-    const source = this;
-
-    console.log('loading tile', [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]);
-    tile.setLoader(function (extent, resolution, projection) {
-      source.worker
-        .then((w) =>
+    console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]);
+    tile.setLoader((extent, resolution, projection) => {
+      Promise.all([this.worker, this.metadata])
+        .then(([w]) =>
           w.db.query(
-            `SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?`,
+            'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
             [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]
           ))
         .then((r) => {

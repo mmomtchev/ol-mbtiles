@@ -13,7 +13,7 @@ import { MBTilesSource } from 'ol-mbtiles';
 import { waterStyle, roadStyle, buildingStyle } from './style';
 
 // MBTiles from
-// https://data.maptiler.com/downloads/dataset/osm/europe/#1.57/66.5/6.1
+// https://data.maptiler.com/downloads/dataset/osm/europe/
 // 34.4 GB original file
 // down to 19.2GB after vacuum (MapTiler, wtf?)
 
@@ -28,8 +28,9 @@ export default function () {
         source: new MBTilesSource({
           url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
           layers: ['transportation', 'water', 'waterway'],
+          attributions: ['MapTiler', 'OSM', 'https://data.maptiler.com/downloads/dataset/osm/europe/'],
           maxZoom: 14,
-          minZoom: 0,
+          minZoom: 0
         }),
         style: function (feature, resolution) {
           switch (feature.get('layer')) {
