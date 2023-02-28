@@ -13,7 +13,7 @@ import { MBTilesSource } from 'ol-mbtiles';
 import { waterStyle, roadStyle, buildingStyle } from './style';
 
 // MBTiles from
-// https://archive.org/download/osm-vector-mbtiles/
+// https://data.maptiler.com/downloads/dataset/osm/europe/#1.57/66.5/6.1
 // 34.4 GB original file
 // down to 19.2GB after vacuum (MapTiler, wtf?)
 
