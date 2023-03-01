@@ -17,6 +17,7 @@ async function loadExample(example: string) {
   text.then((s) => $('#text').html(s.default));
 }
 
+$('#menu').empty();
 for (const e of Object.keys(examples)) {
   $('#menu').append(`<button id="${e}" class="menu-btn btn btn-primary m-2" >${examples[e]}</button>`);
 }

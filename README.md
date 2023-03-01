@@ -29,6 +29,9 @@ sqlite> vacuum;
 
 # Try the demo
 
+The demo is live at https://mmomtchev.github.io/ol-mbtiles/
+
+To run it locally:
 * Checkout the code
 * `npm install`
 * `npm run start`
