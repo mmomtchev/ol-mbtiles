@@ -31,5 +31,5 @@ sqlite> vacuum;
 
 * Checkout the code
 * `npm install`
-* `webpack serve --mode=development`
+* `npm run start`
 * Open `http://localhost:9000`

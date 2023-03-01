@@ -3,7 +3,7 @@ import './style.css';
 import 'prism-themes/themes/prism-vsc-dark-plus.css';
 
 const examples = {
-  'velivole': 'Towns from velivole.fr, ESPG: 4326',
+  'velivole': 'Towns from velivole.fr, EPSG: 4326',
   'klokantech': 'Borders from klokantech, EPSG: 3587',
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, EPSG: 3587'
 };
