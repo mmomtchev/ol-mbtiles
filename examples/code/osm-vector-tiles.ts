@@ -27,8 +27,7 @@ export default function () {
           layers: ['transportation', 'water', 'waterway'],
           attributions: ['MapTiler', 'OSM', 'https://data.maptiler.com/downloads/dataset/osm/europe/'],
           maxZoom: 14,
-          minZoom: 0,
-          sqlWorkers: 1
+          minZoom: 0
         }),
         style: function (feature, resolution) {
           switch (feature.get('layer')) {
