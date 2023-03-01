@@ -12,8 +12,6 @@ async function loadExample(example: string) {
   const code = import(`./code/${example}`);
   const text = import(`!!html-loader?{"minimize":false}!./prettier-loader.js!./code/${example}.ts`);
 
-  console.log(await text);
-
   $('#example').html('<div id="map"></div>');
   code.then((mod) => mod.default());
   text.then((s) => $('#text').html(s.default));

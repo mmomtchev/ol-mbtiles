@@ -15,6 +15,7 @@ import { MBTilesFormat } from './mbtiles-format';
 export interface Options extends VectorTileOptions {
   tileCacheSize?: number;
   sqlCacheSize?: number;
+  sqlWorkers?: number;
   layers?: string[];
 }
 
@@ -35,12 +36,14 @@ interface Metadata {
 };
 
 export class MBTilesSource extends VectorTileSource {
-  worker: Promise<WorkerHttpvfs>;
+  worker: Promise<WorkerHttpvfs>[];
   metadata: Promise<Metadata | null>;
+  currentWorker: number;
 
   constructor(options: Options) {
     super({
       ...options,
+      cacheSize: options.tileCacheSize,
       url: undefined,
       format: new MBTilesFormat({
         layers: options.layers
@@ -60,14 +63,18 @@ export class MBTilesSource extends VectorTileSource {
       }
     } as SplitFileConfigPure;
 
-    this.worker = createDbWorker(
-      [config],
-      workerUrl.toString(),
-      wasmUrl.toString(),
-      maxBytesToRead
-    );
+    this.worker = [];
+    for (let i = 0; i < (options.sqlWorkers ?? 4); i++) {
+      this.worker[i] = createDbWorker(
+        [config],
+        workerUrl.toString(),
+        wasmUrl.toString(),
+        maxBytesToRead
+      );
+    }
+    this.currentWorker = 0;
 
-    this.metadata = this.worker
+    this.metadata = this.worker[(this.currentWorker++) % this.worker.length]
       .then((w) => w.db.query('SELECT name,value FROM metadata WHERE name="maxzoom" or name="minzoom"'))
       .then((r) => {
         // Alas, at the moment it is not possible to replace the TileGrid after constructing the layer
@@ -78,8 +85,8 @@ export class MBTilesSource extends VectorTileSource {
           }, {}) as Record<string, number>;
           console.debug('Loaded metadata', data);
           if (options.maxZoom != data.maxzoom || options.minZoom != data.minzoom) {
-            console.warn(`minZoom/maxZoom ${data.minzoom}/${data.maxzoom}` + 
-            ` of retrieved MBTiles do not match Openlayers configuration ${options.minZoom}/${options.maxZoom}`);
+            console.warn(`minZoom/maxZoom ${data.minzoom}/${data.maxzoom}` +
+              ` of retrieved MBTiles do not match Openlayers configuration ${options.minZoom}/${options.maxZoom}`);
           }
           return data as unknown as Metadata;
         }
@@ -94,8 +101,8 @@ export class MBTilesSource extends VectorTileSource {
   tileLoader(tile: VectorTile, url: string) {
     console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
-      Promise.all([this.worker, this.metadata])
-        .then(([w]) =>
+      this.worker[(this.currentWorker++) % this.worker.length]
+        .then((w) =>
           w.db.query(
             'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
             [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]
