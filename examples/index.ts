@@ -27,3 +27,4 @@ $('.menu-btn').on('click', (ev) => {
   loadExample(ev.target.id);
 });
 
+loadExample(Object.keys(examples)[0]);
