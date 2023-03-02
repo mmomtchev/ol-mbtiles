@@ -38,7 +38,6 @@ describe('MBTilesSource', () => {
           assert.instanceOf(rdb, RenderFeature);
           assert.strictEqual(rdb?.getProperties()['ele'], 1774);
           assert.strictEqual(rdb?.getGeometry()?.getType(), 'Point');
-          console.log(rdb);
           assert.deepEqual(rdb.getExtent(), [686421.23460082, 5741182.805842454, 686421.23460082, 5741182.805842454]);
         } catch (e) {
           source.destroy();

@@ -8,7 +8,6 @@ globalThis.olMBTiles = {
 import WebWorker from 'web-worker';
 globalThis.Worker = class Worker extends WebWorker {
   constructor(specifier, options = {}) {
-    //specifier = specifier.replace('dist', 'node_modules');
     super(specifier, { type: 'module' });
   }
 } as typeof WebWorker;
