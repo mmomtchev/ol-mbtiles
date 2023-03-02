@@ -21,10 +21,14 @@ export interface Options extends VectorTileOptions {
   layers?: string[];
 };
 
-//const workerUrl = new URL('file:///home/mmom/src/ol-mbtiles/node_modules/sql.js-httpvfs/dist/sqlite.worker.js');
-const workerUrl = new URL('file:///home/mmom/src/ol-mbtiles/test/sqlworker.js');
-const wasmUrl = new URL('file:///home/mmom/src/ol-mbtiles/node_modules/sql.js-httpvfs/dist/sql-wasm.wasm');
-
+const workerUrl = globalThis.olMBTiles?.workerUrl ?? new URL(
+  'sql.js-httpvfs/dist/sqlite.worker.js',
+  import.meta.url,
+);
+const wasmUrl = globalThis.olMBTiles?.wasmUrl ?? new URL(
+  'sql.js-httpvfs/dist/sql-wasm.wasm',
+  import.meta.url,
+); 
 const maxBytesToRead = 10 * 1024 * 1024;
 
 interface Metadata {

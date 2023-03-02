@@ -2,7 +2,8 @@
   "spec": "test/*.test.ts",
   "require": [
     "ts-node/register",
-    "tsconfig-paths/register.js"
+    "tsconfig-paths/register.js",
+    "test/setup.ts"
   ],
   "reporter": "tap",
   "timeout": 30000,

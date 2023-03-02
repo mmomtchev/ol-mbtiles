@@ -10,15 +10,6 @@ chai.use(spies);
 const assert = chai.assert;
 const expect = chai.expect;
 
-// WebWorker polyfill
-import WebWorker from 'web-worker';
-globalThis.Worker = class Worker extends WebWorker {
-  constructor(specifier, options = {}) {
-    specifier = specifier.replace('dist', 'node_modules');
-    super(specifier, { type: 'module' });
-  }
-} as typeof WebWorker;
-
 describe('MBTilesSource', () => {
   it('should retrieve tiles', (done) => {
     const layers = ['mountain_peak', 'transportation'];
@@ -34,7 +25,7 @@ describe('MBTilesSource', () => {
     const resolution = 19.109257071294063;
     const projection = 'ESPG:3587';
     const loadFn = source.getTileLoadFunction();
-    const tile = new VectorTile([12, 2118, 1461], TileState.EMPTY, '', new MBTilesFormat({layers}), loadFn);
+    const tile = new VectorTile([12, 2118, 1461], TileState.EMPTY, '', new MBTilesFormat({ layers }), loadFn);
 
     tile.setLoader = chai.spy((loader: FeatureLoader) => {
       expect(loader).is.a('function');
