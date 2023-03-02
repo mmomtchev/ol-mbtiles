@@ -8,7 +8,9 @@ const examples = {
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, EPSG: 3587'
 };
 
-async function loadExample(example: string) {
+async function loadExample() {
+  const example = window.location.hash.slice(1);
+  console.log('load', example);
   const code = import(`./code/${example}`);
   const text = import(`!!html-loader?{"minimize":false}!./prettier-loader.cjs!./code/${example}.ts`);
 
@@ -17,13 +19,19 @@ async function loadExample(example: string) {
   text.then((s) => $('#text').html(s.default));
 }
 
-$('#menu').empty();
-for (const e of Object.keys(examples)) {
-  $('#menu').append(`<button id="${e}" class="menu-btn btn btn-primary m-2" >${examples[e]}</button>`);
-}
+$(function () {
+  $('#menu').empty();
+  for (const e of Object.keys(examples)) {
+    $('#menu').append(`<button id="id-${e}" class="menu-btn btn btn-primary m-2" >${examples[e]}</button>`);
+  }
 
-$('.menu-btn').on('click', (ev) => {
-  loadExample(ev.target.id);
+  $('.menu-btn').on('click', (ev) => {
+    console.log(ev.target.id);
+    window.location.hash = ev.target.id.slice(3);
+    loadExample();
+  });
+
+  if (!window.location.hash)
+    window.location.hash = Object.keys(examples)[0];
+  loadExample();
 });
-
-loadExample(Object.keys(examples)[0]);
