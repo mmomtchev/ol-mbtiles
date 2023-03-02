@@ -35,14 +35,6 @@ export interface Options extends VectorTileOptions {
   format?: never;
 };
 
-const workerUrl = globalThis.olMBTiles?.workerUrl ?? new URL(
-  'sql.js-httpvfs/dist/sqlite.worker.js',
-  import.meta.url,
-);
-const wasmUrl = globalThis.olMBTiles?.wasmUrl ?? new URL(
-  'sql.js-httpvfs/dist/sql-wasm.wasm',
-  import.meta.url,
-); 
 interface Metadata {
   minzoom: number;
   maxzoom: number;
@@ -55,6 +47,14 @@ export class MBTilesSource extends VectorTileSource {
   private worker: Promise<WorkerHttpvfs>[];
   private currentWorker: number;
   metadata: Promise<Metadata | null>;
+  static workerUrl = new URL(
+    'sql.js-httpvfs/dist/sqlite.worker.js',
+    import.meta.url,
+  );
+  static wasmUrl = new URL(
+    'sql.js-httpvfs/dist/sql-wasm.wasm',
+    import.meta.url,
+  ); 
 
   constructor(options: Options) {
     super({
@@ -82,8 +82,8 @@ export class MBTilesSource extends VectorTileSource {
     for (let i = 0; i < (options.sqlWorkers ?? 4); i++) {
       this.worker[i] = sqlhttp.createDbWorker(
         [config],
-        workerUrl.toString(),
-        wasmUrl.toString(),
+        MBTilesSource.workerUrl.toString(),
+        MBTilesSource.wasmUrl.toString(),
         options.maxSingleTransfer ?? 1024 * 1024 * 10
       );
     }
@@ -92,7 +92,6 @@ export class MBTilesSource extends VectorTileSource {
     this.metadata = this.worker[(this.currentWorker++) % this.worker.length]
       .then((w) => w.db.query('SELECT name,value FROM metadata WHERE name="maxzoom" or name="minzoom"'))
       .then((r) => {
-        console.log('metadata', r);
         // Alas, at the moment it is not possible to replace the TileGrid after constructing the layer
         if (r && r.length == 2) {
           const data = r.reduce((a, x) => {
@@ -124,7 +123,6 @@ export class MBTilesSource extends VectorTileSource {
             [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]
           ))
         .then((r) => {
-          console.log('tile', r);
           if (r && r[0] && r[0]['tile_data']) {
             const format = tile.getFormat();
             const features = format.readFeatures(r[0]['tile_data'], {
