@@ -2,6 +2,9 @@
 
 Openlayers plugin for rendering remote vector tile sets in `MBTiles` format
 
+[![License: ISC](https://img.shields.io/github/license/mmomtchev/ol-mbtiles)](https://github.com/mmomtchev/ol-mbtiles/blob/main/LICENSE)
+[![Node.js CI](https://github.com/mmomtchev/ol-mbtiles/actions/workflows/node.js.yml/badge.svg)](https://github.com/mmomtchev/ol-mbtiles/actions/workflows/node.js.yml)
+
 # Status
 
 `HIGHLY EXPERIMENTAL` / `UNPUBLISHED`
