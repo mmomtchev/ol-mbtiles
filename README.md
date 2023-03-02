@@ -8,17 +8,24 @@ Openlayers plugin for rendering remote vector tile sets in `MBTiles` format
 
 # Status
 
-`HIGHLY EXPERIMENTAL` / `UNPUBLISHED`
+`EXPERIMENTAL`
 
-**Bear in mind that this plugin does something that was never meant to be possible.**
+This project started as a quick hack built upon another quick hack by [@phiresky](https://github.com/phiresky/sql.js-httpvfs) - namely using `HTTP` `RANGE` requests to implement a VFS-like interface to access remote SQLite databases using only the HTTP protocol. His bundle includes SQLite3 compiled to WebAssembly from the [sql.js](https://github.com/sql-js/sql.js/) project.
 
-It builds upon what started as a quick hack by @phiresky - namely using `HTTP` `RANGE` requests to implement a VFS-like interface to access remote SQLite databases using only the HTTP protocol. The bundle includes SQLite3 compiled to WebAssembly.
+I deem the experiment an absolute success, proving that not only is this possible, but also that the efficiency loss is acceptable. In fact, when this is coupled with a high-speed CDN provider compared to a complex single application server, the loss could be completely offset by the lower latency of the CDN provider.
 
-The current conclusion is that this can work rather well and has a bandwidth overhead of about 60% in its current form - that is it transfers 60% more data than it would have transferred if each tile was available as a separate file. Further improvements are possible by making sure that the indices are downloaded only once, by eventually reordering and merging requests and by optimizing the bundle size.
+I will surely fix any glaring bugs in this version, but I do not intend to add any new features.
 
-While this is not a perfect solution, it is still a potentially very useful tool that will open many new possibilities - including hosting on low-cost CDN providers.
+This current version has a number of problems, the most major of which is that when using multiple connections to the database the cache is only partially shared.
 
-**Currently there is only a vector tile driver, raster support is planned at a later stage**
+Since December 2022, there is a new SQLite WASM project that is backed by both the SQLite and the Chromium teams which will probably become the industry standard. I am currently working on a new VFS over HTTP driver for this version on which 2.0 will be based and it will include:
+
+- Drop-in replacement for the current version
+- Built-in support for multiple shared connections to the database with cache sharing
+- MBTiles and GeoPackage support
+- Vector and raster data
+
+**Currently there is only a vector tile driver, there won't be raster support in 1.0**
 
 # SQLite optimization
 
@@ -36,7 +43,8 @@ sqlite> vacuum;
 The demo is live at https://mmomtchev.github.io/ol-mbtiles/
 
 To run it locally:
-* Checkout the code
-* `npm install`
-* `npm run start`
-* Open `http://localhost:9000`
+
+- Checkout the code
+- `npm install`
+- `npm run start`
+- Open `http://localhost:9000`
