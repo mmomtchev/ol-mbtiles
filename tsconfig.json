@@ -6,10 +6,15 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "paths": {
-      "ol-mbtiles": ["./src"]
+      "ol-mbtiles": [
+        "./src"
+      ]
     },
     "baseUrl": "."
   },
+  "include": [
+    "./src"
+  ],
   "exclude": [
     "node_modules"
   ]

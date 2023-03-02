@@ -10,7 +10,7 @@ const examples = {
 
 async function loadExample(example: string) {
   const code = import(`./code/${example}`);
-  const text = import(`!!html-loader?{"minimize":false}!./prettier-loader.js!./code/${example}.ts`);
+  const text = import(`!!html-loader?{"minimize":false}!./prettier-loader.cjs!./code/${example}.ts`);
 
   $('#example').html('<div id="map"></div>');
   code.then((mod) => mod.default());

@@ -1,0 +1,11 @@
+{
+  "spec": "test/*.test.ts",
+  "require": [
+    "ts-node/register",
+    "tsconfig-paths/register.js"
+  ],
+  "reporter": "tap",
+  "timeout": 30000,
+  "v8-expose-gc": true,
+  "loader": "ts-node/esm"
+}

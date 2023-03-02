@@ -10,6 +10,18 @@
       "type": "chrome",
       "url": "http://localhost:9000",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch mocha",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_OPTIONS": "--loader ts-node/esm"
+      },
+      "program": "${workspaceFolder}/node_modules/mocha/lib/cli/cli.js"
     }
   ]
 }

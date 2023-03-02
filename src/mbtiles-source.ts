@@ -1,14 +1,16 @@
-import { createDbWorker, WorkerHttpvfs } from 'sql.js-httpvfs';
+// Why is this horror necessary?
+// Because of https://github.com/nodejs/cjs-module-lexer/pull/24
+import sqlhttpDefault from 'sql.js-httpvfs';
+import * as sqlhttpAll from 'sql.js-httpvfs';
+const sqlhttp = sqlhttpDefault ?? sqlhttpAll;
+import type { WorkerHttpvfs } from 'sql.js-httpvfs';
 import { SplitFileConfigPure } from 'sql.js-httpvfs/dist/sqlite.worker';
 
-import { Extent } from 'ol/extent';
-import { ProjectionLike } from 'ol/proj';
 import VectorTileSource, { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
-import VectorTile from 'ol/VectorTile';
-import { TileCoord } from 'ol/tilecoord';
-import TileGrid from 'ol/tilegrid/TileGrid';
-import Feature from 'ol/Feature';
-import { Geometry } from 'ol/geom';
+import VectorTile from 'ol/VectorTile.js';
+import { TileCoord } from 'ol/tilecoord.js';
+import Feature from 'ol/Feature.js';
+import { Geometry } from 'ol/geom.js';
 
 import { MBTilesFormat } from './mbtiles-format';
 
@@ -17,16 +19,11 @@ export interface Options extends VectorTileOptions {
   sqlCacheSize?: number;
   sqlWorkers?: number;
   layers?: string[];
-}
+};
 
-const workerUrl = new URL(
-  'sql.js-httpvfs/dist/sqlite.worker.js',
-  import.meta.url,
-);
-const wasmUrl = new URL(
-  'sql.js-httpvfs/dist/sql-wasm.wasm',
-  import.meta.url,
-);
+//const workerUrl = new URL('file:///home/mmom/src/ol-mbtiles/node_modules/sql.js-httpvfs/dist/sqlite.worker.js');
+const workerUrl = new URL('file:///home/mmom/src/ol-mbtiles/test/sqlworker.js');
+const wasmUrl = new URL('file:///home/mmom/src/ol-mbtiles/node_modules/sql.js-httpvfs/dist/sql-wasm.wasm');
 
 const maxBytesToRead = 10 * 1024 * 1024;
 
@@ -36,9 +33,9 @@ interface Metadata {
 };
 
 export class MBTilesSource extends VectorTileSource {
-  worker: Promise<WorkerHttpvfs>[];
+  private worker: Promise<WorkerHttpvfs>[];
+  private currentWorker: number;
   metadata: Promise<Metadata | null>;
-  currentWorker: number;
 
   constructor(options: Options) {
     super({
@@ -65,7 +62,7 @@ export class MBTilesSource extends VectorTileSource {
 
     this.worker = [];
     for (let i = 0; i < (options.sqlWorkers ?? 4); i++) {
-      this.worker[i] = createDbWorker(
+      this.worker[i] = sqlhttp.createDbWorker(
         [config],
         workerUrl.toString(),
         wasmUrl.toString(),
@@ -98,7 +95,7 @@ export class MBTilesSource extends VectorTileSource {
       });
   }
 
-  tileLoader(tile: VectorTile, url: string) {
+  private tileLoader(tile: VectorTile, url: string) {
     console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       this.worker[(this.currentWorker++) % this.worker.length]
@@ -125,5 +122,13 @@ export class MBTilesSource extends VectorTileSource {
           tile.onError();
         });
     });
+  }
+
+  destroy() {
+    for (const worker of this.worker) {
+      worker.then((w) => {
+        w.release();
+      });
+    }
   }
 }

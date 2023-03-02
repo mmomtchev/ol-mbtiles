@@ -2,13 +2,11 @@ import Protobuf from 'pbf';
 import { VectorTile, VectorTileFeature } from '@mapbox/vector-tile';
 import * as pako from 'pako';
 
-import FeatureFormat, { ReadOptions } from 'ol/format/Feature';
-import Projection from 'ol/proj/Projection';
-import RenderFeature from 'ol/render/Feature';
-import { Extent } from 'ol/extent';
-import { FeatureLike } from 'ol/Feature';
-import { Geometry } from 'ol/geom';
-import { ProjectionLike, get as getProjection } from 'ol/proj';
+import FeatureFormat, { ReadOptions } from 'ol/format/Feature.js';
+import Projection from 'ol/proj/Projection.js';
+import RenderFeature from 'ol/render/Feature.js';
+import { FeatureLike } from 'ol/Feature.js';
+import { get as getProjection } from 'ol/proj.js';
 
 declare module '@mapbox/vector-tile' {
   interface VectorTileFeature {
