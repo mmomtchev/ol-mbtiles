@@ -10,7 +10,7 @@
     "build:examples": "webpack --mode production",
     "build:lib": "rollup -c rollup.config.mjs",
     "build": "npm run build:lib && npm run build:examples",
-    "deploy:examples": "node scripts/publish-ghpages.js",
+    "deploy:examples": "node scripts/publish-ghpages.cjs",
     "c8": "node_modules/.bin/c8 mocha",
     "lcov": "node_modules/.bin/c8 report --reporter=text-lcov > coverage/tests.lcov",
     "test": "mocha",
