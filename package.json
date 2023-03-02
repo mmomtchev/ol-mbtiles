@@ -2,7 +2,8 @@
   "name": "ol-mbtiles",
   "version": "1.0.0",
   "description": "MBTiles format reader for Openlayers",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "start": "webpack serve --mode development",
