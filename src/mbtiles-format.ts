@@ -33,7 +33,7 @@ export class MBTilesFormat extends FeatureFormat {
   extent: number;
   static MBTypes = {
     mono: ['Unknown', 'Point', 'LineString', 'Polygon' ],
-    multi: ['Unknown', 'Unknown', 'MultiLineString', 'MultiPolygon']
+    multi: ['Unknown', 'MultiPoint', 'MultiLineString', 'Polygon']
    } as Record<'mono' | 'multi', (Type | 'Unknown')[]>;
 
   constructor(options?: Options) {
@@ -80,6 +80,8 @@ export class MBTilesFormat extends FeatureFormat {
       return null;
 
     for (let i = 0; i < points.length; i++) {
+      if (points[i].length == 0)
+        continue;
       for (let j = 0; j < points[i].length; j++) {
         flatCoordinates.push(points[i][j].x, points[i][j].y);
       }
