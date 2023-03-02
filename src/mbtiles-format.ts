@@ -7,6 +7,7 @@ import Projection from 'ol/proj/Projection.js';
 import RenderFeature from 'ol/render/Feature.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { get as getProjection } from 'ol/proj.js';
+import { Type } from 'ol/geom/Geometry';
 
 declare module '@mapbox/vector-tile' {
   interface VectorTileFeature {
@@ -31,9 +32,10 @@ export class MBTilesFormat extends FeatureFormat {
   private layerName_: string;
   supportedMediaTypes: string[];
   extent: number;
-  static MBTypes = [
-    'Unknown', 'Point', 'LineString', 'Polygon'
-  ] as ('Unknown' | 'Point' | 'LineString' | 'Polygon')[];
+  static MBTypes = {
+    mono: ['Unknown', 'Point', 'LineString', 'Polygon' ],
+    multi: ['Unknown', 'Unknown', 'MultiLineString', 'MultiPolygon']
+   } as Record<'mono' | 'multi', (Type | 'Unknown')[]>;
 
   constructor(options?: Options) {
     super();
@@ -74,7 +76,7 @@ export class MBTilesFormat extends FeatureFormat {
     const flatCoordinates = [] as number[];
     const ends = [] as number[];
 
-    let type = MBTilesFormat.MBTypes[source.type];
+    let type: Type | 'Unknown' = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
     if (type === 'Unknown')
       return null;
 
