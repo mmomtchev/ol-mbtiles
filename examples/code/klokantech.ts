@@ -13,7 +13,7 @@ import { styleBorder } from '../style';
 // https://github.com/klokantech/vector-tiles-sample
 
 export default function () {
-  const map = new Map({
+  return new Map({
     target: 'map',
     layers: [
       new TileLayer({

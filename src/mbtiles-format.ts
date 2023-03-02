@@ -21,7 +21,7 @@ export interface Options {
   geometryName?: string;
   idProperty?: string;
   extent?: number;
-};
+}
 
 export class MBTilesFormat extends FeatureFormat {
   dataProjection: Projection;
@@ -29,7 +29,6 @@ export class MBTilesFormat extends FeatureFormat {
   private geometryName_: string;
   private layers_: string[] | null;
   private idProperty_: string;
-  private layerName_: string;
   supportedMediaTypes: string[];
   extent: number;
   static MBTypes = {
@@ -76,7 +75,7 @@ export class MBTilesFormat extends FeatureFormat {
     const flatCoordinates = [] as number[];
     const ends = [] as number[];
 
-    let type: Type | 'Unknown' = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
+    const type: Type | 'Unknown' = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
     if (type === 'Unknown')
       return null;
 
@@ -120,7 +119,7 @@ export class MBTilesFormat extends FeatureFormat {
     return features;
   }
 
-  readProjection(source) {
+  readProjection() {
     return this.dataProjection;
   }
 

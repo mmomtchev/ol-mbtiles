@@ -14,4 +14,4 @@ module.exports = function ts_loader(content, map, meta) {
     Prism.languages.typescript, 'typescript');
   this.callback(null, html, map, meta);
   return;
-}
+};

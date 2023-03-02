@@ -59,7 +59,7 @@ describe('MBTilesSource', () => {
         }
       });
 
-      loader!.call(source, extent, resolution, projection, [], () => undefined);
+      loader.call(source, extent, resolution, projection, [], () => undefined);
     });
 
     loadFn(tile, '');

@@ -16,14 +16,17 @@ I deem the experiment an absolute success, proving that not only is this possibl
 
 I will surely fix any glaring bugs in this version, but I do not intend to add any new features.
 
-This current version has a number of problems, the most major of which is that when using multiple connections to the database the cache is only partially shared.
-
 Since December 2022, there is a new SQLite WASM project that is backed by both the SQLite and the Chromium teams which will probably become the industry standard. I am currently working on a new VFS over HTTP driver for this version on which 2.0 will be based and it will include:
 
 - Drop-in replacement for the current version
 - Built-in support for multiple shared connections to the database with cache sharing
 - MBTiles and GeoPackage support
 - Vector and raster data
+
+The current version has a number of difficult to solve shortcomings:
+
+- When using multiple connections to the database the cache is only partially shared
+- Bundling can sometimes be difficult since there is a worker with a WASM blob in it (but this is likely to affect the new project as well)
 
 **Currently there is only a vector tile driver, there won't be raster support in 1.0**
 
@@ -45,39 +48,39 @@ npm install ol-mbtiles
 ```
 
 ```js
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import VectorTileLayer from 'ol/layer/VectorTile';
-import { fromLonLat } from 'ol/proj';
-import { MBTilesSource } from 'ol-mbtiles';
+import Map from "ol/Map.js";
+import View from "ol/View.js";
+import VectorTileLayer from "ol/layer/VectorTile";
+import { fromLonLat } from "ol/proj";
+import { MBTilesSource } from "ol-mbtiles";
 
 const map = new Map({
-  target: 'map',
+  target: "map",
   layers: [
     new VectorTileLayer({
       source: new MBTilesSource({
-        url: 'https://server/path/file.mbtiles',
-        layers: ['transportation', 'water', 'waterway'],
+        url: "https://server/path/file.mbtiles",
+        layers: ["transportation", "water", "waterway"],
         maxZoom: 12,
-        minZoom: 0
-      })
-    })
+        minZoom: 0,
+      }),
+    }),
   ],
   view: new View({
     center: fromLonLat([12, 50]),
-    zoom: 6
+    zoom: 6,
   }),
 });
 ```
 
-Keep in mind that while webpack is capable of automatically discovering and bundling the worker code and the `sql.js` wasm code, most other bundlers are not and will need manual configuration.
+Keep in mind that while webpack is capable of automatically discovering and bundling the worker and the `sql.js` WASM bundle, most other bundlers are not and will need manual configuration.
 
 Here is a solution that works in Vite:
 
 ```js
-import { MBTilesSource } from 'ol-mbtiles';
-import workerUrl from 'sql.js-httpvfs/dist/sqlite.worker.js?url';
-import wasmUrl from 'sql.js-httpvfs/dist/sql-wasm.wasm?url';
+import { MBTilesSource } from "ol-mbtiles";
+import workerUrl from "sql.js-httpvfs/dist/sqlite.worker.js?url";
+import wasmUrl from "sql.js-httpvfs/dist/sql-wasm.wasm?url";
 MBTilesSource.workerUrl = workerUrl;
 MBTilesSource.wasmUrl = wasmUrl;
 ```

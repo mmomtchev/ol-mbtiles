@@ -11,19 +11,19 @@
  * @license MIT
  */
 
-var Url = require("url");
-var spawn = require("child_process").spawn;
-var fs = require("fs");
+var Url = require('url');
+var spawn = require('child_process').spawn;
+var fs = require('fs');
 
 exports.XMLHttpRequest = function() {
-  "use strict";
+  'use strict';
 
   /**
    * Private variables
    */
   var self = this;
-  var http = require("http");
-  var https = require("https");
+  var http = require('http');
+  var https = require('https');
 
   // Holds http.js objects
   var request;
@@ -38,8 +38,8 @@ exports.XMLHttpRequest = function() {
 
   // Set some default headers
   var defaultHeaders = {
-    "User-Agent": "node-XMLHttpRequest",
-    "Accept": "*/*",
+    'User-Agent': 'node-XMLHttpRequest',
+    'Accept': '*/*',
   };
 
   var headers = {};
@@ -49,33 +49,33 @@ exports.XMLHttpRequest = function() {
   // The following are allowed but banned in the spec:
   // * user-agent
   var forbiddenRequestHeaders = [
-    "accept-charset",
-    "accept-encoding",
-    "access-control-request-headers",
-    "access-control-request-method",
-    "connection",
-    "content-length",
-    "content-transfer-encoding",
-    "cookie",
-    "cookie2",
-    "date",
-    "expect",
-    "host",
-    "keep-alive",
-    "origin",
-    "referer",
-    "te",
-    "trailer",
-    "transfer-encoding",
-    "upgrade",
-    "via"
+    'accept-charset',
+    'accept-encoding',
+    'access-control-request-headers',
+    'access-control-request-method',
+    'connection',
+    'content-length',
+    'content-transfer-encoding',
+    'cookie',
+    'cookie2',
+    'date',
+    'expect',
+    'host',
+    'keep-alive',
+    'origin',
+    'referer',
+    'te',
+    'trailer',
+    'transfer-encoding',
+    'upgrade',
+    'via'
   ];
 
   // These request methods are not allowed
   var forbiddenRequestMethods = [
-    "TRACE",
-    "TRACK",
-    "CONNECT"
+    'TRACE',
+    'TRACK',
+    'CONNECT'
   ];
 
   // Send flag
@@ -107,8 +107,8 @@ exports.XMLHttpRequest = function() {
   this.onreadystatechange = null;
 
   // Result & response
-  this.responseText = "";
-  this.responseXML = "";
+  this.responseText = '';
+  this.responseXML = '';
   this.status = null;
   this.statusText = null;
   
@@ -159,15 +159,15 @@ exports.XMLHttpRequest = function() {
 
     // Check for valid request method
     if (!isAllowedHttpMethod(method)) {
-      throw new Error("SecurityError: Request method not allowed");
+      throw new Error('SecurityError: Request method not allowed');
     }
 
     settings = {
-      "method": method,
-      "url": url.toString(),
-      "async": (typeof async !== "boolean" ? true : async),
-      "user": user || null,
-      "password": password || null
+      'method': method,
+      'url': url.toString(),
+      'async': (typeof async !== 'boolean' ? true : async),
+      'user': user || null,
+      'password': password || null
     };
 
     setState(this.OPENED);
@@ -191,14 +191,14 @@ exports.XMLHttpRequest = function() {
    */
   this.setRequestHeader = function(header, value) {
     if (this.readyState !== this.OPENED) {
-      throw new Error("INVALID_STATE_ERR: setRequestHeader can only be called when state is OPEN");
+      throw new Error('INVALID_STATE_ERR: setRequestHeader can only be called when state is OPEN');
     }
     if (!isAllowedHttpHeader(header)) {
-      console.warn("Refused to set unsafe header \"" + header + "\"");
+      console.warn('Refused to set unsafe header "' + header + '"');
       return;
     }
     if (sendFlag) {
-      throw new Error("INVALID_STATE_ERR: send flag is true");
+      throw new Error('INVALID_STATE_ERR: send flag is true');
     }
     header = headersCase[header.toLowerCase()] || header;
     headersCase[header.toLowerCase()] = header;
@@ -212,7 +212,7 @@ exports.XMLHttpRequest = function() {
    * @return string Text of the header or null if it doesn't exist.
    */
   this.getResponseHeader = function(header) {
-    if (typeof header === "string"
+    if (typeof header === 'string'
       && this.readyState > this.OPENED
       && response
       && response.headers
@@ -232,14 +232,14 @@ exports.XMLHttpRequest = function() {
    */
   this.getAllResponseHeaders = function() {
     if (this.readyState < this.HEADERS_RECEIVED || errorFlag) {
-      return "";
+      return '';
     }
-    var result = "";
+    var result = '';
 
     for (var i in response.headers) {
       // Cookie headers are excluded
-      if (i !== "set-cookie" && i !== "set-cookie2") {
-        result += i + ": " + response.headers[i] + "\r\n";
+      if (i !== 'set-cookie' && i !== 'set-cookie2') {
+        result += i + ': ' + response.headers[i] + '\r\n';
       }
     }
     return result.substr(0, result.length - 2);
@@ -252,11 +252,11 @@ exports.XMLHttpRequest = function() {
    * @return string Returns the request header or empty string if not set
    */
   this.getRequestHeader = function(name) {
-    if (typeof name === "string" && headersCase[name.toLowerCase()]) {
+    if (typeof name === 'string' && headersCase[name.toLowerCase()]) {
       return headers[headersCase[name.toLowerCase()]];
     }
 
-    return "";
+    return '';
   };
 
   /**
@@ -266,11 +266,11 @@ exports.XMLHttpRequest = function() {
    */
   this.send = function(data) {
     if (this.readyState !== this.OPENED) {
-      throw new Error("INVALID_STATE_ERR: connection must be opened before send() is called");
+      throw new Error('INVALID_STATE_ERR: connection must be opened before send() is called');
     }
 
     if (sendFlag) {
-      throw new Error("INVALID_STATE_ERR: send has already been called");
+      throw new Error('INVALID_STATE_ERR: send has already been called');
     }
 
     var ssl = false, local = false;
@@ -278,35 +278,35 @@ exports.XMLHttpRequest = function() {
     var host;
     // Determine the server
     switch (url.protocol) {
-      case "https:":
+      case 'https:':
         ssl = true;
         // SSL & non-SSL both need host, no break here.
-      case "http:":
+      case 'http:':
         host = url.hostname;
         break;
 
-      case "file:":
+      case 'file:':
         local = true;
         break;
 
       case undefined:
       case null:
-      case "":
-        host = "localhost";
+      case '':
+        host = 'localhost';
         break;
 
       default:
-        throw new Error("Protocol not supported.");
+        throw new Error('Protocol not supported.');
     }
 
     // Load files off the local filesystem (file://)
     if (local) {
-      if (settings.method !== "GET") {
-        throw new Error("XMLHttpRequest: Only GET method is supported");
+      if (settings.method !== 'GET') {
+        throw new Error('XMLHttpRequest: Only GET method is supported');
       }
 
       if (settings.async) {
-        fs.readFile(url.pathname, "binary", function(error, data) {
+        fs.readFile(url.pathname, 'binary', function(error, data) {
           if (error) {
             self.handleError(error);
           } else {
@@ -317,7 +317,7 @@ exports.XMLHttpRequest = function() {
         });
       } else {
         try {
-          this.responseText = fs.readFileSync(url.pathname, "binary");
+          this.responseText = fs.readFileSync(url.pathname, 'binary');
           this.status = 200;
           setState(self.DONE);
         } catch(e) {
@@ -332,7 +332,7 @@ exports.XMLHttpRequest = function() {
     // to use http://localhost:port/path
     var port = url.port || (ssl ? 443 : 80);
     // Add query string if one is used
-    var uri = url.pathname + (url.search ? url.search : "");
+    var uri = url.pathname + (url.search ? url.search : '');
 
     // Set the defaults if they haven't been set
     for (var name in defaultHeaders) {
@@ -344,31 +344,31 @@ exports.XMLHttpRequest = function() {
     // Set the Host header or the server may reject the request
     headers.Host = host;
     if (!((ssl && port === 443) || port === 80)) {
-      headers.Host += ":" + url.port;
+      headers.Host += ':' + url.port;
     }
 
     // Set Basic Auth if necessary
     if (settings.user) {
-      if (typeof settings.password === "undefined") {
-        settings.password = "";
+      if (typeof settings.password === 'undefined') {
+        settings.password = '';
       }
-      var authBuf = new Buffer(settings.user + ":" + settings.password);
-      headers.Authorization = "Basic " + authBuf.toString("base64");
+      var authBuf = new Buffer(settings.user + ':' + settings.password);
+      headers.Authorization = 'Basic ' + authBuf.toString('base64');
     }
 
     // Set content length header
-    if (settings.method === "GET" || settings.method === "HEAD") {
+    if (settings.method === 'GET' || settings.method === 'HEAD') {
       data = null;
     } else if (data) {
-      headers["Content-Length"] = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
+      headers['Content-Length'] = Buffer.isBuffer(data) ? data.length : Buffer.byteLength(data);
 
-      if (!headers["Content-Type"]) {
-        headers["Content-Type"] = "text/plain;charset=UTF-8";
+      if (!headers['Content-Type']) {
+        headers['Content-Type'] = 'text/plain;charset=UTF-8';
       }
-    } else if (settings.method === "POST") {
+    } else if (settings.method === 'POST') {
       // For a post with no data set Content-Length: 0.
       // This is required by buggy servers that don't meet the specs.
-      headers["Content-Length"] = 0;
+      headers['Content-Length'] = 0;
     }
 
     var options = {
@@ -393,7 +393,7 @@ exports.XMLHttpRequest = function() {
       sendFlag = true;
 
       // As per spec, this is called here for historical reasons.
-      self.dispatchEvent("readystatechange");
+      self.dispatchEvent('readystatechange');
 
       // Handler for the response
       var responseHandler = function responseHandler(resp) {
@@ -413,24 +413,24 @@ exports.XMLHttpRequest = function() {
             hostname: url.hostname,
             port: url.port,
             path: url.path,
-            method: response.statusCode === 303 ? "GET" : settings.method,
+            method: response.statusCode === 303 ? 'GET' : settings.method,
             headers: headers,
             withCredentials: self.withCredentials
           };
 
           // Issue the new request
-          request = doRequest(newOptions, responseHandler).on("error", errorHandler);
+          request = doRequest(newOptions, responseHandler).on('error', errorHandler);
           request.end();
           // @TODO Check if an XHR event needs to be fired here
           return;
         }
 
-        response.setEncoding("binary");
+        response.setEncoding('binary');
 
         setState(self.HEADERS_RECEIVED);
         self.status = response.statusCode;
 
-        response.on("data", function(chunk) {
+        response.on('data', function(chunk) {
           // Make sure there's some data
           if (chunk) {
             self.responseText += chunk;
@@ -441,7 +441,7 @@ exports.XMLHttpRequest = function() {
           }
         });
 
-        response.on("end", function() {
+        response.on('end', function() {
           if (sendFlag) {
             // Discard the end event if the connection has been aborted
             setState(self.DONE);
@@ -449,7 +449,7 @@ exports.XMLHttpRequest = function() {
           }
         });
 
-        response.on("error", function(error) {
+        response.on('error', function(error) {
           self.handleError(error);
         });
       };
@@ -460,7 +460,7 @@ exports.XMLHttpRequest = function() {
       };
 
       // Create the request
-      request = doRequest(options, responseHandler).on("error", errorHandler);
+      request = doRequest(options, responseHandler).on('error', errorHandler);
 
       // Node 0.4 and later won't accept empty data. Make sure it's needed.
       if (data) {
@@ -469,38 +469,38 @@ exports.XMLHttpRequest = function() {
 
       request.end();
 
-      self.dispatchEvent("loadstart");
+      self.dispatchEvent('loadstart');
     } else { // Synchronous
       // Create a temporary file for communication with the other Node process
-      var contentFile = ".node-xmlhttprequest-content-" + process.pid;
-      var syncFile = ".node-xmlhttprequest-sync-" + process.pid;
-      fs.writeFileSync(syncFile, "", "binary");
+      var contentFile = '.node-xmlhttprequest-content-' + process.pid;
+      var syncFile = '.node-xmlhttprequest-sync-' + process.pid;
+      fs.writeFileSync(syncFile, '', 'binary');
       // The async request the other Node process executes
-      var execString = "var http = require('http'), https = require('https'), fs = require('fs');"
-        + "var doRequest = http" + (ssl ? "s" : "") + ".request;"
-        + "var options = " + JSON.stringify(options) + ";"
-        + "var responseText = '';"
-        + "var req = doRequest(options, function(response) {"
-        + "response.setEncoding('binary');"
-        + "response.on('data', function(chunk) {"
-        + "  responseText += chunk;"
-        + "});"
-        + "response.on('end', function() {"
-        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: null, data: {statusCode: response.statusCode, headers: response.headers, text: responseText}}), 'binary');"
-        + "fs.unlinkSync('" + syncFile + "');"
-        + "});"
-        + "response.on('error', function(error) {"
-        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: error}), 'binary');"
-        + "fs.unlinkSync('" + syncFile + "');"
-        + "});"
-        + "}).on('error', function(error) {"
-        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: error}), 'binary');"
-        + "fs.unlinkSync('" + syncFile + "');"
-        + "});"
-        + (data ? "req.write('" + JSON.stringify(data).slice(1,-1).replace(/'/g, "\\'") + "');":"")
-        + "req.end();";
+      var execString = 'var http = require(\'http\'), https = require(\'https\'), fs = require(\'fs\');'
+        + 'var doRequest = http' + (ssl ? 's' : '') + '.request;'
+        + 'var options = ' + JSON.stringify(options) + ';'
+        + 'var responseText = \'\';'
+        + 'var req = doRequest(options, function(response) {'
+        + 'response.setEncoding(\'binary\');'
+        + 'response.on(\'data\', function(chunk) {'
+        + '  responseText += chunk;'
+        + '});'
+        + 'response.on(\'end\', function() {'
+        + 'fs.writeFileSync(\'' + contentFile + '\', JSON.stringify({err: null, data: {statusCode: response.statusCode, headers: response.headers, text: responseText}}), \'binary\');'
+        + 'fs.unlinkSync(\'' + syncFile + '\');'
+        + '});'
+        + 'response.on(\'error\', function(error) {'
+        + 'fs.writeFileSync(\'' + contentFile + '\', JSON.stringify({err: error}), \'binary\');'
+        + 'fs.unlinkSync(\'' + syncFile + '\');'
+        + '});'
+        + '}).on(\'error\', function(error) {'
+        + 'fs.writeFileSync(\'' + contentFile + '\', JSON.stringify({err: error}), \'binary\');'
+        + 'fs.unlinkSync(\'' + syncFile + '\');'
+        + '});'
+        + (data ? 'req.write(\'' + JSON.stringify(data).slice(1,-1).replace(/'/g, '\\\'') + '\');':'')
+        + 'req.end();';
       // Start the other Node Process, executing this string
-      var syncProc = spawn(process.argv[0], ["-e", execString]);
+      var syncProc = spawn(process.argv[0], ['-e', execString]);
       while(fs.existsSync(syncFile)) {
         // Wait while the sync file is empty
       }
@@ -544,8 +544,8 @@ exports.XMLHttpRequest = function() {
 
     headers = defaultHeaders;
     this.status = 0;
-    this.responseText = "";
-    this.responseXML = "";
+    this.responseText = '';
+    this.responseXML = '';
 
     errorFlag = true;
 
@@ -587,8 +587,8 @@ exports.XMLHttpRequest = function() {
    * Dispatch any events, including both "on" methods and events attached using addEventListener.
    */
   this.dispatchEvent = function(event) {
-    if (typeof self["on" + event] === "function") {
-      self["on" + event]();
+    if (typeof self['on' + event] === 'function') {
+      self['on' + event]();
     }
     if (event in listeners) {
       for (var i = 0, len = listeners[event].length; i < len; i++) {
@@ -607,13 +607,13 @@ exports.XMLHttpRequest = function() {
       self.readyState = state;
 
       if (settings.async || self.readyState < self.OPENED || self.readyState === self.DONE) {
-        self.dispatchEvent("readystatechange");
+        self.dispatchEvent('readystatechange');
       }
 
       if (self.readyState === self.DONE && !errorFlag) {
-        self.dispatchEvent("load");
+        self.dispatchEvent('load');
         // @TODO figure out InspectorInstrumentation::didLoadXHR(cookie)
-        self.dispatchEvent("loadend");
+        self.dispatchEvent('loadend');
       }
     }
   };

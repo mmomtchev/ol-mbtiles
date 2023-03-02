@@ -8,6 +8,6 @@ MBTilesSource.wasmUrl = new URL('../node_modules/sql.js-httpvfs/dist/sql-wasm.wa
 import WebWorker from 'web-worker';
 globalThis.Worker = class Worker extends WebWorker {
   constructor(specifier, options = {}) {
-    super(specifier, { type: 'module' });
+    super(specifier, { ...options, type: 'module' });
   }
 } as typeof WebWorker;

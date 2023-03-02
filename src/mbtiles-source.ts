@@ -33,12 +33,12 @@ export interface Options extends VectorTileOptions {
   tileUrlFunction?: never;
   tileLoadFunction?: never;
   format?: never;
-};
+}
 
 interface Metadata {
   minzoom: number;
   maxzoom: number;
-};
+}
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -113,7 +113,7 @@ export class MBTilesSource extends VectorTileSource {
       });
   }
 
-  private tileLoader(tile: VectorTile, url: string) {
+  private tileLoader(tile: VectorTile, _url: string) {
     console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       this.worker[(this.currentWorker++) % this.worker.length]

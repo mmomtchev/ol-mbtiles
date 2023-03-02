@@ -10,7 +10,7 @@ import { MBTilesSource } from 'ol-mbtiles';
 import { styleTown } from '../style';
 
 export default function () {
-  const map = new Map({
+  return new Map({
     target: 'map',
     layers: [
       new TileLayer({

@@ -6,7 +6,7 @@ import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
 import { MBTilesSource } from 'ol-mbtiles';
-import { waterStyle, roadStyle, buildingStyle } from '../style';
+import { waterStyle, roadStyle } from '../style';
 
 // MBTiles from
 // https://data.maptiler.com/downloads/dataset/osm/europe/
@@ -14,7 +14,7 @@ import { waterStyle, roadStyle, buildingStyle } from '../style';
 // down to 19.2GB after vacuum (MapTiler, wtf?)
 
 export default function () {
-  const map = new Map({
+  return new Map({
     target: 'map',
     layers: [
       new TileLayer({
@@ -28,7 +28,7 @@ export default function () {
           maxZoom: 14,
           minZoom: 0
         }),
-        style: function (feature, resolution) {
+        style: function (feature) {
           switch (feature.get('layer')) {
             case 'water':
             case 'waterway':
