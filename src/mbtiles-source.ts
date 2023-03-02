@@ -15,10 +15,24 @@ import { Geometry } from 'ol/geom.js';
 import { MBTilesFormat } from './mbtiles-format';
 
 export interface Options extends VectorTileOptions {
-  tileCacheSize?: number;
-  sqlCacheSize?: number;
+  /**
+   * Number of parallel workers to use for retrieving tiles, @default 4
+   */
   sqlWorkers?: number;
+  /**
+   * List of layer names to selectively include, @default everything
+   */
   layers?: string[];
+  /**
+   * Maximum amount of bytes to transfer for a single tile.
+   * This is a protection against requesting from a database without index.
+   * @default 10485760
+   */
+  maxSingleTransfer?: number;
+
+  tileUrlFunction?: never;
+  tileLoadFunction?: never;
+  format?: never;
 };
 
 const workerUrl = globalThis.olMBTiles?.workerUrl ?? new URL(
@@ -29,13 +43,14 @@ const wasmUrl = globalThis.olMBTiles?.wasmUrl ?? new URL(
   'sql.js-httpvfs/dist/sql-wasm.wasm',
   import.meta.url,
 ); 
-const maxBytesToRead = 10 * 1024 * 1024;
-
 interface Metadata {
   minzoom: number;
   maxzoom: number;
 };
 
+/**
+ * A tile source in a remote .mbtiles file accessible by HTTP
+ */
 export class MBTilesSource extends VectorTileSource {
   private worker: Promise<WorkerHttpvfs>[];
   private currentWorker: number;
@@ -44,7 +59,6 @@ export class MBTilesSource extends VectorTileSource {
   constructor(options: Options) {
     super({
       ...options,
-      cacheSize: options.tileCacheSize,
       url: undefined,
       format: new MBTilesFormat({
         layers: options.layers
@@ -70,7 +84,7 @@ export class MBTilesSource extends VectorTileSource {
         [config],
         workerUrl.toString(),
         wasmUrl.toString(),
-        maxBytesToRead
+        options.maxSingleTransfer ?? 1024 * 1024 * 10
       );
     }
     this.currentWorker = 0;
@@ -78,6 +92,7 @@ export class MBTilesSource extends VectorTileSource {
     this.metadata = this.worker[(this.currentWorker++) % this.worker.length]
       .then((w) => w.db.query('SELECT name,value FROM metadata WHERE name="maxzoom" or name="minzoom"'))
       .then((r) => {
+        console.log('metadata', r);
         // Alas, at the moment it is not possible to replace the TileGrid after constructing the layer
         if (r && r.length == 2) {
           const data = r.reduce((a, x) => {
@@ -109,6 +124,7 @@ export class MBTilesSource extends VectorTileSource {
             [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]
           ))
         .then((r) => {
+          console.log('tile', r);
           if (r && r[0] && r[0]['tile_data']) {
             const format = tile.getFormat();
             const features = format.readFeatures(r[0]['tile_data'], {

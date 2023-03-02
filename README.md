@@ -38,11 +38,45 @@ sqlite> pragma page_size = 1024;
 sqlite> vacuum;
 ```
 
-# Try the demo
+# Quickstart
 
-The demo is live at https://mmomtchev.github.io/ol-mbtiles/
+```
+npm install ol-mbtiles
+```
 
-To run it locally:
+```js
+import Map from 'ol/Map.js';
+import View from 'ol/View.js';
+import VectorTileLayer from 'ol/layer/VectorTile';
+import { fromLonLat } from 'ol/proj';
+import { MBTilesSource } from 'ol-mbtiles';
+
+const map = new Map({
+  target: 'map',
+  layers: [
+    new VectorTileLayer({
+      source: new MBTilesSource({
+        url: 'https://server/path/file.mbtiles',
+        layers: ['transportation', 'water', 'waterway'],
+        maxZoom: 12,
+        minZoom: 0
+      })
+    })
+  ],
+  view: new View({
+    center: fromLonLat([12, 50]),
+    zoom: 6
+  }),
+});
+```
+
+Keep in mind that while webpack is capable of automatically discovering and bundling the worker code and the sql.js wasm code, most other bundlers are not and will need manual configuration.
+
+# Examples
+
+Check the demo for examples: https://mmomtchev.github.io/ol-mbtiles/
+
+Or run it locally:
 
 - Checkout the code
 - `npm install`

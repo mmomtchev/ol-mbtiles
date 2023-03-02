@@ -7,7 +7,7 @@
     "sourceMap": true,
     "paths": {
       "ol-mbtiles": [
-        "./src"
+        "."
       ]
     },
     "baseUrl": "."
