@@ -60,11 +60,11 @@ export const styleBorder = new Style({
 });
 
 
-// Styles from https://openlayers.org/en/latest/examples/osm-vector-tiles.html
+// Styles inspired from https://openlayers.org/en/latest/examples/osm-vector-tiles.html
 const roadStyleCache = {};
 const roadColor = {
-  'major_road': '#776',
-  'minor_road': '#ccb',
+  'motorway': '#776',
+  'trunk': '#ccb',
   'highway': '#f39',
 };
 export const buildingStyle = new Style({
@@ -81,8 +81,14 @@ export const waterStyle = new Style({
     color: '#9db9e8',
   }),
 });
+export const boundaryStyle = new Style({
+  stroke: new Stroke({
+    color: '#8B008B',
+    width: 2,
+  }),
+});
 export const roadStyle = function (feature) {
-  const kind = feature.get('kind');
+  const kind = feature.get('class');
   const railway = feature.get('railway');
   const sort_key = feature.get('sort_key');
   const styleKey = kind + '/' + railway + '/' + sort_key;
@@ -106,4 +112,30 @@ export const roadStyle = function (feature) {
     roadStyleCache[styleKey] = style;
   }
   return style;
+};
+const placeBase = new Style({
+  image: new Circle({
+    radius: 5,
+    fill: new Fill({
+      color: '#000080'
+    })
+  })
+});
+const textStroke = new Stroke({
+  color: 'white',
+  width: 2
+});
+export const placeStyle = function (feature) {
+  if (feature.get('class') == 'country')
+    return null;
+  if (feature.get('name')) {
+    const style = placeBase.clone();
+    style.setText(new Text({
+      text: feature.get('name'),
+      offsetY: -5,
+      font: 'bold 16px sans-serif',
+      stroke: textStroke
+    }));
+    return style;
+  }
 };
