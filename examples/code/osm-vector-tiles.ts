@@ -23,7 +23,7 @@ export default function () {
       new VectorTileLayer({
         source: new MBTilesSource({
           url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
-          layers: ['transportation', 'water', 'waterway', 'landuse','place'],
+          layers: ['transportation', 'water', 'waterway', 'landuse', 'place', 'boundary'],
           attributions: ['MapTiler', 'OSM', 'https://data.maptiler.com/downloads/dataset/osm/europe/'],
           maxZoom: 14,
           minZoom: 0
@@ -40,7 +40,7 @@ export default function () {
             case 'boundary':
               return boundaryStyle;
             case 'place':
-                return placeStyle(feature);
+              return placeStyle(feature);
             default:
               return null;
           }
