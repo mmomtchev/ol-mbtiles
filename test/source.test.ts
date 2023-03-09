@@ -14,7 +14,7 @@ describe('MBTilesSource', () => {
   const tileCoord = [12, 2118, 1461];
   const extent = [684875.7734351791, 5733388.6176145, 694659.7130556817, 5743172.5572350025];
   const resolution = 19.109257071294063;
-  const projection = 'ESPG:3587';
+  const projection = 'EPSG:3857';
 
   it('should retrieve tiles', (done) => {
     const source = new MBTilesSource({
