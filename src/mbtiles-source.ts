@@ -1,10 +1,4 @@
-// Why is this horror necessary?
-// Because of https://github.com/nodejs/cjs-module-lexer/pull/24
-import sqlhttpDefault from 'sql.js-httpvfs';
-import * as sqlhttpAll from 'sql.js-httpvfs';
-const sqlhttp = sqlhttpDefault ?? sqlhttpAll;
-import type { WorkerHttpvfs } from 'sql.js-httpvfs';
-import { SplitFileConfigPure } from 'sql.js-httpvfs/dist/sqlite.worker';
+import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
 import VectorTileSource, { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
 import VectorTile from 'ol/VectorTile.js';
@@ -44,17 +38,8 @@ interface Metadata {
  * A tile source in a remote .mbtiles file accessible by HTTP
  */
 export class MBTilesSource extends VectorTileSource {
-  private worker: Promise<WorkerHttpvfs>[];
-  private currentWorker: number;
+  private pool: Promise<SQLiteHTTPPool>;
   metadata: Promise<Metadata | null>;
-  static workerUrl = new URL(
-    'sql.js-httpvfs/dist/sqlite.worker.js',
-    import.meta.url,
-  );
-  static wasmUrl = new URL(
-    'sql.js-httpvfs/dist/sql-wasm.wasm',
-    import.meta.url,
-  ); 
 
   constructor(options: Options) {
     super({
@@ -69,33 +54,22 @@ export class MBTilesSource extends VectorTileSource {
 
     this.setTileLoadFunction(this.tileLoader.bind(this));
 
-    const config = {
-      from: 'inline',
-      config: {
-        serverMode: 'full',
-        requestChunkSize: 1024,
-        url: options.url
-      }
-    } as SplitFileConfigPure;
+    this.pool = createSQLiteHTTPPool({
+      workers: options.sqlWorkers ?? 4,
+      httpOptions: { maxPageSize: 4096 }
+    })
+      .then((pool) => pool.open(options.url).then(() => pool));
 
-    this.worker = [];
-    for (let i = 0; i < (options.sqlWorkers ?? 4); i++) {
-      this.worker[i] = sqlhttp.createDbWorker(
-        [config],
-        MBTilesSource.workerUrl.toString(),
-        MBTilesSource.wasmUrl.toString(),
-        options.maxSingleTransfer ?? 1024 * 1024 * 10
-      );
-    }
-    this.currentWorker = 0;
-
-    this.metadata = this.worker[(this.currentWorker++) % this.worker.length]
-      .then((w) => w.db.query('SELECT name,value FROM metadata WHERE name="maxzoom" or name="minzoom"'))
+    this.metadata = this.pool
+      .then((p) => p.exec('SELECT name,value FROM metadata WHERE name=$maxzoom or name=$minzoom', {
+        $maxzoom: 'maxzoom',
+        $minzoom: 'minzoom'
+      }))
       .then((r) => {
         // Alas, at the moment it is not possible to replace the TileGrid after constructing the layer
         if (r && r.length == 2) {
           const data = r.reduce((a, x) => {
-            a[x['name']] = x['value'];
+            a[x.row[0] as string] = x.row[1];
             return a;
           }, {}) as Record<string, number>;
           console.debug('Loaded metadata', data);
@@ -116,16 +90,20 @@ export class MBTilesSource extends VectorTileSource {
   private tileLoader(tile: VectorTile, _url: string) {
     console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
-      this.worker[(this.currentWorker++) % this.worker.length]
-        .then((w) =>
-          w.db.query(
-            'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
-            [tile.tileCoord[0], tile.tileCoord[1], (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]]
+      this.pool
+        .then((p) =>
+          p.exec(
+            'SELECT tile_data FROM tiles WHERE zoom_level = $zoom AND tile_column = $col AND tile_row = $row',
+            {
+              $zoom: tile.tileCoord[0],
+              $col: tile.tileCoord[1],
+              $row: (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]
+            }
           ))
         .then((r) => {
-          if (r && r[0] && r[0]['tile_data']) {
+          if (r && r[0] && r[0].row[0]) {
             const format = tile.getFormat();
-            const features = format.readFeatures(r[0]['tile_data'], {
+            const features = format.readFeatures(r[0].row[0], {
               extent,
               featureProjection: projection
             }) as Feature<Geometry>[];
@@ -143,10 +121,6 @@ export class MBTilesSource extends VectorTileSource {
   }
 
   destroy() {
-    for (const worker of this.worker) {
-      worker.then((w) => {
-        w.release();
-      });
-    }
+    return this.pool.then((p) => p.close());
   }
 }
