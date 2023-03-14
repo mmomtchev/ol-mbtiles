@@ -35,6 +35,10 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'examples'),
     },
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    },
     compress: true,
     port: 9000,
   }

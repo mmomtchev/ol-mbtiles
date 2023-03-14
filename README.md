@@ -77,3 +77,5 @@ I have planned:
 - Built-in support for multiple shared connections to the database with cache sharing
 - MBTiles and GeoPackage support
 - Vector and raster data
+
+The first preliminary results are very encouraging, with MBTiles over HTTP from CDN server loading faster than most commercial map services.
