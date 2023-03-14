@@ -12,22 +12,6 @@ Openlayers plugin for rendering remote vector tile sets in `MBTiles` format
 
 This project started as a quick hack built upon another quick hack by [@phiresky](https://github.com/phiresky/sql.js-httpvfs) - namely using `HTTP` `RANGE` requests to implement a VFS-like interface to access remote SQLite databases using only the HTTP protocol. His bundle includes SQLite3 compiled to WebAssembly from the [sql.js](https://github.com/sql-js/sql.js/) project.
 
-I deem the experiment an absolute success, proving that not only is this possible, but also that the efficiency loss is acceptable. In fact, when this is coupled with a high-speed CDN provider compared to a complex single application server, the loss could be completely offset by the lower latency of the CDN provider.
-
-I will surely fix any glaring bugs in this version, but I do not intend to add any new features.
-
-Since December 2022, there is a new SQLite WASM project that is backed by both the SQLite and the Chromium teams which will probably become the industry standard. I am currently working on a new VFS over HTTP driver for this version on which 2.0 will be based and it will include:
-
-- Drop-in replacement for the current version
-- Built-in support for multiple shared connections to the database with cache sharing
-- MBTiles and GeoPackage support
-- Vector and raster data
-
-The current version has a number of difficult to solve shortcomings:
-
-- When using multiple connections to the database the cache is only partially shared
-- Bundling can sometimes be difficult since there is a worker with a WASM blob in it (but this is likely to affect the new project as well)
-
 **Currently there is only a vector tile driver, there won't be raster support in 1.0**
 
 # SQLite optimization
@@ -73,18 +57,6 @@ const map = new Map({
 });
 ```
 
-Keep in mind that while webpack is capable of automatically discovering and bundling the worker and the `sql.js` WASM bundle, most other bundlers are not and will need manual configuration.
-
-Here is a solution that works in Vite:
-
-```js
-import { MBTilesSource } from "ol-mbtiles";
-import workerUrl from "sql.js-httpvfs/dist/sqlite.worker.js?url";
-import wasmUrl from "sql.js-httpvfs/dist/sql-wasm.wasm?url";
-MBTilesSource.workerUrl = workerUrl;
-MBTilesSource.wasmUrl = wasmUrl;
-```
-
 # Examples
 
 Check the demo for examples: https://mmomtchev.github.io/ol-mbtiles/
@@ -95,3 +67,13 @@ Or run it locally:
 - `npm install`
 - `npm run start`
 - Open `http://localhost:9000`
+
+# Roadmap
+
+The next version will use my brand new [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http) project that includes many improvements over the original HTTP VFS driver, including shared cache for concurrent DB connections.
+
+I have planned:
+- Drop-in replacement for the current version
+- Built-in support for multiple shared connections to the database with cache sharing
+- MBTiles and GeoPackage support
+- Vector and raster data
