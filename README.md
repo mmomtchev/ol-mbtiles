@@ -57,6 +57,18 @@ const map = new Map({
 });
 ```
 
+Keep in mind that while webpack is capable of automatically discovering and bundling the worker and the `sql.js` WASM bundle, most other bundlers are not and will need manual configuration.
+
+Here is a solution that works in Vite:
+
+```js
+import { MBTilesSource } from "ol-mbtiles";
+import workerUrl from "sql.js-httpvfs/dist/sqlite.worker.js?url";
+import wasmUrl from "sql.js-httpvfs/dist/sql-wasm.wasm?url";
+MBTilesSource.workerUrl = workerUrl;
+MBTilesSource.wasmUrl = wasmUrl;
+```
+
 # Examples
 
 Check the demo for examples: https://mmomtchev.github.io/ol-mbtiles/
