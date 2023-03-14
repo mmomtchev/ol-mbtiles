@@ -24,7 +24,9 @@ export default function () {
       }),
       new VectorTileLayer({
         source: new MBTilesSource({
-          url: 'https://velivole.b-cdn.net/mbtiles/countries.mbtiles'
+          url: 'https://velivole.b-cdn.net/mbtiles/countries.mbtiles',
+          minZoom: 0,
+          maxZoom: 6
         }),
         style: styleBorder
       })

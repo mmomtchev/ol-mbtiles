@@ -21,7 +21,9 @@ export default function () {
       }),
       new VectorTileLayer({
         source: new MBTilesSource({
-          url: 'https://velivole.b-cdn.net/mbtiles/place/0.mbtiles'
+          url: 'https://velivole.b-cdn.net/mbtiles/place/0.mbtiles',
+          minZoom: 0,
+          maxZoom: 12
         }),
         style: styleTown.bind(null, 0),
         renderBuffer: 1024,
@@ -29,7 +31,9 @@ export default function () {
       }),
       new VectorTileLayer({
         source: new MBTilesSource({
-          url: 'https://velivole.b-cdn.net/mbtiles/place/1.mbtiles'
+          url: 'https://velivole.b-cdn.net/mbtiles/place/1.mbtiles',
+          minZoom: 0,
+          maxZoom: 12
         }),
         style: styleTown.bind(null, 1),
         renderBuffer: 256,
@@ -37,7 +41,9 @@ export default function () {
       }),
       new VectorTileLayer({
         source: new MBTilesSource({
-          url: 'https://velivole.b-cdn.net/mbtiles/place/2.mbtiles'
+          url: 'https://velivole.b-cdn.net/mbtiles/place/2.mbtiles',
+          minZoom: 0,
+          maxZoom: 12
         }),
         style: styleTown.bind(null, 2),
         minZoom: 10
