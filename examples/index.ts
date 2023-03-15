@@ -1,6 +1,8 @@
 import 'ol/ol.css';
 import './style.css';
 import 'prism-themes/themes/prism-vsc-dark-plus.css';
+import { Map } from 'ol';
+import Layer from 'ol/layer/Layer';
 
 const examples = {
   'velivole': 'Towns from velivole.fr, EPSG: 4326',
@@ -8,14 +10,31 @@ const examples = {
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, EPSG: 3857'
 };
 
+let map: Map | null = null;
+
 async function loadExample() {
   const example = window.location.hash.slice(1);
-  console.log('load', example);
   const code = import(`./code/${example}`);
   const text = import(`!!html-loader?{"minimize":false}!./prettier-loader.cjs!./code/${example}.ts`);
 
   $('#example').html('<div id="map"></div>');
-  code.then((mod) => mod.default());
+  if (map) {
+    // This should probably go into Openlayers
+    for (const l of map.getLayers().getArray()) {
+      if (typeof (l as Layer).getSource === 'function') {
+        const source = (l as Layer).getSource();
+        if (source && typeof source.dispose === 'function') {
+          source.dispose();
+        }
+      }
+      if (typeof l.dispose === 'function')
+        l.dispose();
+    }
+    map.dispose();
+  }
+  code.then((mod) => {
+    map = mod.default();
+  });
   text.then((s) => $('#text').html(s.default));
 }
 
@@ -28,7 +47,6 @@ $(function () {
     `<div class="ms-auto">${typeof crossOriginIsolated === 'undefined' ? '<strong class="text-danger">disabled</strong>' : '<strong class="text-success">enabled</strong>'}</div></div>`);
 
   $('.menu-btn').on('click', (ev) => {
-    console.log(ev.target.id);
     window.location.hash = ev.target.id.slice(3);
     loadExample();
   });

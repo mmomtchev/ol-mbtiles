@@ -36,6 +36,16 @@ interface Metadata {
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
+ * 
+ * WARNING
+ * If your application continuously creates and removes MBTilesSource
+ * objects, special care must be taken to properly dispose of them.
+ * An MBTilesSource creates a thread pool that V8 is unable to
+ * automatically garbage-collect unless the dispose() method
+ * is invoked. Check loadExample() in
+ * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
+ * for an example implementation that properly disposes of a Map
+ * containing MBTilesSource
  */
 export class MBTilesSource extends VectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
@@ -120,7 +130,7 @@ export class MBTilesSource extends VectorTileSource {
     });
   }
 
-  destroy() {
+  disposeInternal() {
     return this.pool.then((p) => p.close());
   }
 }
