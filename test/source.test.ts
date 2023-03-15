@@ -37,7 +37,7 @@ describe('MBTilesSource', () => {
           assert.strictEqual(rdb?.getGeometry()?.getType(), 'Point');
           assert.deepEqual(rdb.getExtent(), [686421.23460082, 5741182.805842454, 686421.23460082, 5741182.805842454]);
         } catch (e) {
-          source.destroy();
+          source.dispose();
           done(e);
         }
       });
@@ -48,11 +48,11 @@ describe('MBTilesSource', () => {
           expect(tile.setFeatures).to.be.called.once;
           expect(tile.onLoad).to.be.called.once;
           expect(tile.onError).to.be.not.be.called;
-          source.destroy();
+          source.dispose();
           done();
           return;
         } catch (e) {
-          source.destroy();
+          source.dispose();
           done(e);
         }
       });
@@ -90,7 +90,7 @@ describe('MBTilesSource', () => {
           assert.strictEqual(rdb?.getProperties()['layer'], 'mountain_peak');
           assert.deepEqual(rdb.getExtent(), [686421.23460082, 5741182.805842454, 686421.23460082, 5741182.805842454]);
         } catch (e) {
-          source.destroy();
+          source.dispose();
           done(e);
         }
       });
@@ -101,11 +101,11 @@ describe('MBTilesSource', () => {
           expect(tile.setFeatures).to.be.called.once;
           expect(tile.onLoad).to.be.called.once;
           expect(tile.onError).to.be.not.be.called;
-          source.destroy();
+          source.dispose();
           done();
           return;
         } catch (e) {
-          source.destroy();
+          source.dispose();
           done(e);
         }
       });
@@ -139,11 +139,11 @@ describe('MBTilesSource', () => {
           expect(tile.setFeatures).to.not.be.called;
           expect(tile.onLoad).to.be.not.be.called;
           expect(tile.onError).to.be.be.called.once;
-          source.destroy();
+          source.dispose();
           done();
           return;
         } catch (e) {
-          source.destroy();
+          source.dispose();
           done(e);
         }
       });
