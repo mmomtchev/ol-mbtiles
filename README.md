@@ -80,6 +80,17 @@ Or run it locally:
 - `npm run start`
 - Open `http://localhost:9000`
 
+# Performance
+
+Generally, the cost of handling an `.mbtiles`-based source is higher than that of a static tree of `.mvt`/`.pbf` tiles on an equivalent hosting provider. However the difference has proven to be almost negligible and it can even be completely offset by hosting on cheaper/faster CDN providers because of the simplified deployment that `.mbtiles` offer - single large file vs millions or even billions of small files in a huge tree.
+
+There are some caveats though:
+
+- The first initialization requires the downloading of the 849KB SQLite3 `.wasm` binary and the 650KB SQLite3 JS glue code - subsequent visits of the same map will probably load these from the cache
+- Downloading of the very first tile requires the downloading of the SQLite3 headers and the index locations and it can also be somewhat slower
+- Each remote `.mbtiles` source requires that each DB worker connected to it runs in a separate browser thread with a separate SQLite3 instance - one should try to find a compromise between the memory used by each worker and the overall tile downloading performance - especially if using a large number of `.mbtiles` sources - as the memory requirements can become prohibitive
+- If continuously adding and removing layers, you should take care of properly disposing layers removed from the map as currently no JS engine can GC worker threads - they can only put them on hold without fully recovering the used memory which will remain committed until the browser tab is closed (or the user navigates away). The new ES12 `FinalizerRegistry` cannot solve this problem, as the number of threads will kill the JS engine much before the GC on the main thread has to start disposing objects.
+
 # Roadmap
 
 The next version will use my brand new [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http) project that includes many improvements over the original HTTP VFS driver, including shared cache for concurrent DB connections.
