@@ -40,7 +40,7 @@ interface Metadata {
  * WARNING
  * If your application continuously creates and removes MBTilesSource
  * objects, special care must be taken to properly dispose of them.
- * An MBTilesSource creates a thread pool that V8 is unable to
+ * An MBTilesSource creates a thread pool that the JS engine is unable to
  * automatically garbage-collect unless the dispose() method
  * is invoked. Check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
