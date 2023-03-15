@@ -3,6 +3,7 @@ import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 import ImageTileSource, { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
+import TileGrid from 'ol/tilegrid/TileGrid';
 
 import { loadMBTilesMetadata, Metadata } from './metadata';
 
@@ -19,8 +20,10 @@ export interface Options extends ImageTileOptions {
   tileUrlFunction?: never;
   tileLoadFunction?: never;
 
-  maxZoom?: number;
-  minZoom?: number;
+  /**
+   * Optional tile grid, refer to the Openlayers manual
+   */
+  tileGrid?: TileGrid;
 }
 
 /**
@@ -56,7 +59,10 @@ export class MBTilesRasterSource extends ImageTileSource {
     })
       .then((pool) => pool.open(options.url).then(() => pool));
 
-    this.metadata = loadMBTilesMetadata(this.pool, options);
+    this.metadata = loadMBTilesMetadata(this.pool, {
+      minZoom: options.tileGrid.getMinZoom(),
+      maxZoom: options.tileGrid.getMaxZoom()
+    });
   }
 
   private tileLoader(tile: ImageTile, _url: string) {
