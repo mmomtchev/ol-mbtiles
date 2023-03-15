@@ -1,4 +1,4 @@
-import { MBTilesFormat, MBTilesSource } from '../dist/index.js';
+import { MBTilesFormat, MBTilesVectorSource } from '../dist/index.js';
 import { Feature, VectorTile } from 'ol';
 import TileState from 'ol/TileState.js';
 import { FeatureLoader } from 'ol/featureloader.js';
@@ -17,7 +17,7 @@ describe('MBTilesSource', () => {
   const projection = 'EPSG:3857';
 
   it('should retrieve tiles', (done) => {
-    const source = new MBTilesSource({
+    const source = new MBTilesVectorSource({
       url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
       sqlWorkers: 1
     });
@@ -66,7 +66,7 @@ describe('MBTilesSource', () => {
 
   it('should filter by layer', (done) => {
     const layers = ['mountain_peak', 'transportation'];
-    const source = new MBTilesSource({
+    const source = new MBTilesVectorSource({
       url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
       layers,
       maxZoom: 14,
@@ -119,7 +119,7 @@ describe('MBTilesSource', () => {
 
   it('should report errors', (done) => {
     const layers = ['mountain_peak', 'transportation'];
-    const source = new MBTilesSource({
+    const source = new MBTilesVectorSource({
       url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
       layers,
       maxZoom: 14,

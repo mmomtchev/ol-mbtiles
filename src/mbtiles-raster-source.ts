@@ -1,14 +1,10 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
-import VectorTileSource, { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
-import VectorTile from 'ol/VectorTile.js';
+import ImageTileSource, { Options as ImageTileOptions } from 'ol/source/TileImage.js';
+import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
-import Feature from 'ol/Feature.js';
-import { Geometry } from 'ol/geom.js';
 
-import { MBTilesFormat } from './mbtiles-format';
-
-export interface Options extends VectorTileOptions {
+export interface Options extends ImageTileOptions {
   /**
    * Number of parallel workers to use for retrieving tiles, @default 4
    */
@@ -20,7 +16,9 @@ export interface Options extends VectorTileOptions {
 
   tileUrlFunction?: never;
   tileLoadFunction?: never;
-  format?: never;
+
+  maxZoom?: number;
+  minZoom?: number;
 }
 
 interface Metadata {
@@ -41,7 +39,7 @@ interface Metadata {
  * for an example implementation that properly disposes of a Map
  * containing MBTilesSource
  */
-export class MBTilesVectorSource extends VectorTileSource {
+export class MBTilesRasterSource extends ImageTileSource {
   private pool: Promise<SQLiteHTTPPool>;
   metadata: Promise<Metadata | null>;
 
@@ -49,9 +47,6 @@ export class MBTilesVectorSource extends VectorTileSource {
     super({
       ...options,
       url: undefined,
-      format: new MBTilesFormat({
-        layers: options.layers
-      }),
       // This is required to prevent Openlayers' cache from thinking that all tiles share the same URL
       tileUrlFunction: (coords: TileCoord) => `${coords[0]}:${coords[1]}:${coords[2]}`
     });
@@ -91,37 +86,29 @@ export class MBTilesVectorSource extends VectorTileSource {
       });
   }
 
-  private tileLoader(tile: VectorTile, _url: string) {
+  private tileLoader(tile: ImageTile, _url: string) {
     console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
-    tile.setLoader((extent, resolution, projection) => {
-      this.pool
-        .then((p) =>
-          p.exec(
-            'SELECT tile_data FROM tiles WHERE zoom_level = $zoom AND tile_column = $col AND tile_row = $row',
-            {
-              $zoom: tile.tileCoord[0],
-              $col: tile.tileCoord[1],
-              $row: (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]
-            }
-          ))
-        .then((r) => {
-          if (r && r[0] && r[0].row[0]) {
-            const format = tile.getFormat();
-            const features = format.readFeatures(r[0].row[0], {
-              extent,
-              featureProjection: projection
-            }) as Feature<Geometry>[];
-            tile.setFeatures(features);
-            tile.onLoad(features, projection);
-            return;
+    const image = tile.getImage() as HTMLImageElement;
+    this.pool
+      .then((p) =>
+        p.exec(
+          'SELECT tile_data FROM tiles WHERE zoom_level = $zoom AND tile_column = $col AND tile_row = $row',
+          {
+            $zoom: tile.tileCoord[0],
+            $col: tile.tileCoord[1],
+            $row: (1 << tile.tileCoord[0]) - 1 - tile.tileCoord[2]
           }
-          throw new Error(`No data for ${tile.tileCoord}`);
-        })
-        .catch((e) => {
-          console.warn(e);
-          tile.onError();
-        });
-    });
+        ))
+      .then((r) => {
+        if (r && r[0]) {
+          if(r[0].row[0] instanceof Uint8Array) {
+            const blob = new Blob([r[0].row[0] as Uint8Array]);
+            const imageUrl = URL.createObjectURL(blob);
+            image.src = imageUrl;
+          }
+        }
+      })
+      .catch(() => tile.setState(3));
   }
 
   disposeInternal() {

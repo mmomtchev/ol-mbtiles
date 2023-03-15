@@ -5,9 +5,10 @@ import { Map } from 'ol';
 import Layer from 'ol/layer/Layer';
 
 const examples = {
-  'velivole': 'Towns from velivole.fr, EPSG: 4326',
-  'klokantech': 'Borders from klokantech, EPSG: 3857',
-  'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, EPSG: 3857'
+  'velivole': 'Towns from velivole.fr, vector EPSG: 4326',
+  'klokantech': 'Borders from klokantech, vector EPSG: 3857',
+  'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, vector EPSG: 3857',
+  'reunion-raster': 'Mapotempo, BD Ortho 5m, La Réunion, raster EPSG: 3857'
 };
 
 let map: Map | null = null;

@@ -6,7 +6,7 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
-import { MBTilesSource } from 'ol-mbtiles';
+import { MBTilesVectorSource as MBTilesSource } from 'ol-mbtiles';
 import { styleTown } from '../style';
 
 export default function () {
