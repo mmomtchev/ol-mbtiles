@@ -21,7 +21,6 @@ export default function () {
       new ImageTileLayer({
         source: new MBTilesRasterSource({
           url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
-          layers: ['transportation', 'water', 'waterway', 'landuse', 'place', 'boundary'],
           attributions: [
             'Mapotempo',
             'BD Ortho 5m',
