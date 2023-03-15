@@ -91,3 +91,7 @@ I have planned:
 - Vector and raster data
 
 The first preliminary results are very encouraging, with MBTiles over HTTP from CDN server loading faster than most commercial map services.
+
+The loading of the very first frame is still somewhat slower - mostly due to the time needed to load the almost 1MB SQLite `.wasm` binary - but once this has been cached, subsequent visits of the same page start rendering much faster.
+
+You can see a live demo of the upcoming release here: [https://ol-mbtiles.momtchev.com/#osm-vector-tiles](https://ol-mbtiles.momtchev.com/#osm-vector-tiles)
