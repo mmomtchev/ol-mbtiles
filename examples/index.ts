@@ -40,12 +40,13 @@ async function loadExample() {
 }
 
 $(function () {
+  const isolation = typeof crossOriginIsolated === 'undefined' || !crossOriginIsolated;
   $('#menu').empty();
   for (const e of Object.keys(examples)) {
     $('#menu').append(`<button id="id-${e}" class="menu-btn btn btn-primary m-2" >${examples[e]}</button>`);
   }
   $('#menu').append('<div class="mt-auto me-2 border p-1 bg-light d-flex flex-column"><div>Cross-Origin isolation:</div>' +
-    `<div class="ms-auto">${typeof crossOriginIsolated === 'undefined' ? '<strong class="text-danger">disabled</strong>' : '<strong class="text-success">enabled</strong>'}</div></div>`);
+    `<div class="ms-auto">${isolation ? '<strong class="text-danger">disabled</strong>' : '<strong class="text-success">enabled</strong>'}</div></div>`);
 
   $('.menu-btn').on('click', (ev) => {
     window.location.hash = ev.target.id.slice(3);
