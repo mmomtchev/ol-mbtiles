@@ -10,7 +10,7 @@ export interface Metadata {
   minZoom?: number;
   maxZoom?: number;
   format?: string;
-  resolutions?: number[];
+  tileGrid?: TileGrid;
   attritubtions: string;
   [key: string]: unknown;
 }
@@ -79,25 +79,25 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
     .then((md) => {
       if (!formats[md.format.toLowerCase()])
         console.warn('Unknown tile format', md.format.toLowerCase());
+
+      // Sometimes, I wonder if Mapbox doesn't hold a patent or some
+      // other kind of investment related to everyone using 3857
+      const projection = opt.projection ?? 'EPSG:3857';
+      const attributions = md.attribution ?? md.description;
+      const maxZoom = opt.maxZoom ?? md.maxZoom;
+      const minZoom = opt.minZoom ?? md.minZoom;
+      md.minZoom = +minZoom;
+      md.maxZoom = +maxZoom;
+      md.projection = projection;
+      md.attributions = attributions;
+      const projExtent = getProjection(projection)?.getExtent?.();
       if (formats[md.format.toLowerCase()] === 'raster') {
-        // Sometimes, I wonder if Mapbox doesn't hold a patent or some
-        // other kind of investment related to everyone using 3857
-        const projection = opt.projection ?? 'EPSG:3857';
-        const maxZoom = opt.maxZoom ?? md.maxZoom;
-        const minZoom = opt.minZoom ?? md.minZoom;
-        const attributions = md.attribution ?? md.description;
-        const projExtent = getProjection(projection)?.getExtent?.();
-        if (maxZoom === undefined || minZoom === undefined || projExtent === undefined)
-          throw new Error('Cannot determine tilegrid, need minZoom, maxZoom and projection');
+        if (maxZoom === undefined || minZoom === undefined)
+          throw new Error('Cannot determine tilegrid, need minZoom, maxZoom');
         const baseResolution = getWidth(projExtent) / 256;
         const resolutions = [baseResolution];
         for (let z = 1; z <= maxZoom; z++)
           resolutions.push(resolutions[resolutions.length - 1] / 2);
-        md.minZoom = minZoom;
-        md.maxZoom = maxZoom;
-        md.resolutions = resolutions;
-        md.projection = projection;
-        md.attributions = attributions;
         md.tileGrid = new TileGrid({
           extent: projExtent,
           minZoom,

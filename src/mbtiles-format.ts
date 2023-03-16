@@ -124,5 +124,4 @@ export class MBTilesFormat extends FeatureFormat {
   readProjection() {
     return this.dataProjection;
   }
-
 }
