@@ -90,70 +90,63 @@ const formats: Record<string, 'raster' | 'vector'> = {
 };
 
 /**
- * Automatically import 
+ * Automatically import MBTiles metadata and return an options object
+ * compatible with the source constructors.
  * 
- * @param opt 
- * @returns 
+ * @param {(MBTilesRasterOptions | MBTilesVectorOptions) & SQLOptions} opt options
+ * @returns {(MBTilesRasterOptions | MBTilesVectorOptions)}
  */
-export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise < T | null > {
+export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T> {
   const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool({
     workers: opt.sqlWorkers ?? 4,
-  httpOptions: { maxPageSize: opt.maxSqlPageSize, cacheSize: opt.sqlCacheSize }
-})
-    .then((pool) => pool.open(opt.url).then(() => pool))
-  .catch((e) => {
-    console.error(e);
-    return null;
-  });
-
-return pool
-  .then((p) => p.exec('SELECT name,value FROM metadata'))
-  .then((r) => {
-    if (r && r.length) {
-      // Transform an array of form [ ['name', 'value' ], ... ] to object
-      const data = r.reduce((a, x) => {
-        a[x.row[0] as string] = x.row[1];
-        return a;
-      }, {}) as Record<string, string | number>;
-      debug('Loaded metadata', data);
-      return data;
-    }
-    throw new Error('Could not load metadata');
+    httpOptions: { maxPageSize: opt.maxSqlPageSize, cacheSize: opt.sqlCacheSize }
   })
-  .then((md: Record<string, unknown>) => {
-    const opts: T = {} as T;
+    .then((pool) => pool.open(opt.url).then(() => pool));
 
-    const format = (md['format'] as string)?.toLowerCase?.();
-    if (!formats[format])
-      console.warn('Unknown tile format', format);
+  return pool
+    .then((p) => p.exec('SELECT name,value FROM metadata'))
+    .then((r) => {
+      if (r && r.length) {
+        // Transform an array of form [ ['name', 'value' ], ... ] to object
+        const data = r.reduce((a, x) => {
+          a[x.row[0] as string] = x.row[1] as string | number;
+          return a;
+        }, {} as Record<string, string | number>);
+        debug('Loaded metadata', data);
+        return data;
+      }
+      throw new Error('Could not load metadata');
+    })
+    .then((md: Record<string, unknown>) => {
+      const opts: T = {} as T;
 
-    // Sometimes, I wonder if Mapbox doesn't hold a patent or some
-    // other kind of investment related to everyone using 3857
-    opts.projection = opt.projection ?? 'EPSG:3857';
-    opts.attributions = (md.attribution ?? md.description) as string;
-    opts.maxZoom = opt.maxZoom ?? +md['maxzoom'] as number;
-    opts.minZoom = opt.minZoom ?? +md['minzoom'] as number;
-    const projExtent = getProjection(opts.projection)?.getExtent?.();
-    if (formats[format] === 'raster') {
-      if (opts.maxZoom === undefined || opts.minZoom === undefined)
-        throw new Error('Cannot determine tilegrid, need minZoom, maxZoom');
-      const baseResolution = getWidth(projExtent) / 256;
-      const resolutions = [baseResolution];
-      for (let z = 1; z <= opts.maxZoom; z++)
-        resolutions.push(resolutions[resolutions.length - 1] / 2);
-      opts.tileGrid = new TileGrid({
-        extent: projExtent,
-        minZoom: opts.minZoom,
-        resolutions
-      });
-    }
-    opts.pool = pool;
-    opts.url = opt.url;
+      const format = (md['format'] as string)?.toLowerCase?.();
+      if (!formats[format])
+        console.warn('Unknown tile format', format);
 
-    return opts;
-  })
-  .catch(e => {
-    console.warn(e);
-    return null;
-  });
+      // Sometimes, I wonder if Mapbox doesn't hold a patent or some
+      // other kind of investment related to everyone using 3857
+      opts.projection = opt.projection ?? 'EPSG:3857';
+      opts.attributions = (md.attribution ?? md.description) as string;
+      opts.maxZoom = opt.maxZoom ?? +(md['maxzoom'] as number);
+      opts.minZoom = opt.minZoom ?? +(md['minzoom'] as number);
+      const projExtent = getProjection(opts.projection)?.getExtent?.();
+      if (formats[format] === 'raster') {
+        if (opts.maxZoom === undefined || opts.minZoom === undefined || projExtent === undefined)
+          throw new Error('Cannot determine tilegrid, need minZoom, maxZoom');
+        const baseResolution = getWidth(projExtent) / 256;
+        const resolutions = [baseResolution];
+        for (let z = 1; z <= opts.maxZoom; z++)
+          resolutions.push(resolutions[resolutions.length - 1] / 2);
+        opts.tileGrid = new TileGrid({
+          extent: projExtent,
+          minZoom: opts.minZoom,
+          resolutions
+        });
+      }
+      opts.pool = pool;
+      opts.url = opt.url;
+
+      return opts;
+    });
 }

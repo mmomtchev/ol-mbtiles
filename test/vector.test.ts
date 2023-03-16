@@ -1,5 +1,6 @@
 import { MBTilesFormat, MBTilesVectorSource } from '../dist/index.js';
 import { Feature, VectorTile } from 'ol';
+import { get as getProjection, Projection } from 'ol/proj.js';
 import TileState from 'ol/TileState.js';
 import { FeatureLoader } from 'ol/featureloader.js';
 import RenderFeature from 'ol/render/Feature.js';
@@ -57,7 +58,9 @@ describe('MBTilesVectorSource', () => {
         }
       });
 
-      loader.call(source, extent, resolution, projection, [], () => undefined);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      loader.call(source as any, extent, resolution, getProjection(projection) as Projection,
+        () => undefined, () => undefined);
     });
 
     loadFn(tile, '');
@@ -74,7 +77,7 @@ describe('MBTilesVectorSource', () => {
       sqlWorkers: 1
     });
     const loadFn = source.getTileLoadFunction();
-    const tile = new VectorTile(tileCoord, TileState.EMPTY, '', new MBTilesFormat({layers}), loadFn);
+    const tile = new VectorTile(tileCoord, TileState.EMPTY, '', new MBTilesFormat({ layers }), loadFn);
 
     tile.setLoader = chai.spy((loader: FeatureLoader) => {
       expect(loader).is.a('function');
@@ -110,7 +113,10 @@ describe('MBTilesVectorSource', () => {
         }
       });
 
-      loader.call(source, extent, resolution, projection, [], () => undefined);
+      // TODO Fix FeatureLoader type in Openlayers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      loader.call(source as any, extent, resolution, getProjection(projection) as Projection,
+        () => undefined, () => undefined);
     });
 
     loadFn(tile, '');
@@ -148,7 +154,9 @@ describe('MBTilesVectorSource', () => {
         }
       });
 
-      loader.call(source, extent, resolution, projection, [], () => undefined);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      loader.call(source as any, extent, resolution, getProjection(projection) as Projection,
+        () => undefined, () => undefined);
     });
 
     loadFn(tile, '');

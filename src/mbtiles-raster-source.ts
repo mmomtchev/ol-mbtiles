@@ -1,10 +1,11 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
 import ImageTileSource from 'ol/source/TileImage.js';
+import Tile from 'ol/Tile.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 
-import { MBTilesRasterOptions } from './mbtiles';
+import { MBTilesRasterOptions, SQLOptions } from './mbtiles';
 import { debug } from './debug';
 
 /**
@@ -26,7 +27,7 @@ export class MBTilesRasterSource extends ImageTileSource {
   /**
    * @param {MBTilesRasterOptions} options options
    */
-  constructor(options: MBTilesRasterOptions) {
+  constructor(options: MBTilesRasterOptions & SQLOptions) {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 
@@ -46,9 +47,10 @@ export class MBTilesRasterSource extends ImageTileSource {
       .then((pool) => pool.open(options.url).then(() => pool));
   }
 
-  private tileLoader(tile: ImageTile, _url: string) {
+  // TODO fix the tile type in Openlayers
+  private tileLoader(tile: Tile, _url: string) {
     debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
-    const image = tile.getImage() as HTMLImageElement;
+    const image = (tile as ImageTile).getImage() as HTMLImageElement;
     this.pool
       .then((p) =>
         p.exec(

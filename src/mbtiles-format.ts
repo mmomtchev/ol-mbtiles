@@ -1,6 +1,6 @@
 import Protobuf from 'pbf';
 import { VectorTile, VectorTileFeature } from '@mapbox/vector-tile';
-import * as pako from 'pako';
+import pako from 'pako';
 
 import FeatureFormat, { ReadOptions } from 'ol/format/Feature.js';
 import Projection from 'ol/proj/Projection.js';
@@ -28,7 +28,7 @@ export class MBTilesFormat extends FeatureFormat {
   private featureClass_: typeof RenderFeature;
   private geometryName_: string;
   private layers_: string[] | null;
-  private idProperty_: string;
+  private idProperty_: string | undefined;
   supportedMediaTypes: string[];
   extent: number;
   static MBTypes = {
@@ -77,7 +77,8 @@ export class MBTilesFormat extends FeatureFormat {
 
     const type: Type | 'Unknown' = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
     if (type === 'Unknown')
-      return null;
+    // TODO: fix in Openlayers
+      return null as unknown as FeatureLike;
 
     for (let i = 0; i < points.length; i++) {
       if (points[i].length == 0)
@@ -89,7 +90,7 @@ export class MBTilesFormat extends FeatureFormat {
     }
 
     const feature = new this.featureClass_(type, flatCoordinates, ends, properties, id);
-    feature.transform(options.dataProjection);
+    feature.transform(options?.dataProjection);
 
     return feature;
   }
@@ -100,8 +101,11 @@ export class MBTilesFormat extends FeatureFormat {
     const features: FeatureLike[] = [];
     const tile = new VectorTile(new Protobuf(pako.ungzip(source)));
     options = this.adaptOptions(options);
-    const dataProjection = getProjection(options.dataProjection);
-    dataProjection.setWorldExtent(options.extent);
+    const dataProjection = getProjection(options?.dataProjection);
+    const extent = options?.extent;
+    if (!dataProjection || !options || !extent)
+      throw new Error('Cannot determine the projection/extent');
+    dataProjection.setWorldExtent(extent);
     dataProjection.setExtent([0, 0, this.extent, this.extent]);
     options.dataProjection = dataProjection;
 

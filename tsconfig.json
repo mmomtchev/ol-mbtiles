@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "strict": true,
     "paths": {
       "ol-mbtiles": [
         "./src"

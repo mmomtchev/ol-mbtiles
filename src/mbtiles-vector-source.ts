@@ -6,9 +6,10 @@ import { TileCoord } from 'ol/tilecoord.js';
 import Feature from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
-import { MBTilesVectorOptions } from './mbtiles';
+import { MBTilesVectorOptions, SQLOptions } from './mbtiles';
 import { MBTilesFormat } from './mbtiles-format';
 import { debug } from './debug';
+import Tile from 'ol/Tile';
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -26,7 +27,7 @@ import { debug } from './debug';
 export class MBTilesVectorSource extends VectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
 
-  constructor(options: MBTilesVectorOptions) {
+  constructor(options: MBTilesVectorOptions & SQLOptions) {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 
@@ -49,7 +50,9 @@ export class MBTilesVectorSource extends VectorTileSource {
       .then((pool) => pool.open(options.url).then(() => pool));
   }
 
-  private tileLoader(tile: VectorTile, _url: string) {
+  private tileLoader(_tile: Tile, _url: string) {
+    // TODO fix the type in Openlayers after the war
+    const tile = _tile as VectorTile;
     debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       this.pool
