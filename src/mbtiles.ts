@@ -79,10 +79,12 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
       if (!formats[md.format])
         console.warn('Unknown tile format', md.format);
       if (formats[md.format] === 'raster') {
-        if (!opt.projection) throw new Error('Projection is mandatory for raster formats');
+        // Sometimes, I wonder if Mapbox doesn't hold a patent or some
+        // other kind of investment related to everyone using 3857
+        const projection = opt.projection ?? 'EPSG:3857';
         const maxZoom = opt.maxZoom ?? md.maxZoom;
         const minZoom = opt.minZoom ?? md.minZoom;
-        const projExtent = getProjection(opt.projection)?.getExtent?.();
+        const projExtent = getProjection(projection)?.getExtent?.();
         if (maxZoom === undefined || minZoom === undefined || projExtent === undefined)
           throw new Error('Cannot determine tilegrid, need minZoom, maxZoom and projection');
         const baseResolution = getWidth(projExtent) / 256;
@@ -92,6 +94,7 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
         md.minZoom = minZoom;
         md.maxZoom = maxZoom;
         md.resolutions = resolutions;
+        md.projection = projection;
         md.tileGrid = new TileGrid({
           extent: projExtent,
           minZoom,

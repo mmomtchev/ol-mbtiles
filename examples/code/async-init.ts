@@ -11,11 +11,6 @@ import { importMBTiles, MBTilesRasterSource } from 'ol-mbtiles';
 // Initialization can be automatic from the MBTiles metadata
 
 export default async function () {
-  const metadata = await importMBTiles({
-    url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
-    projection: 'EPSG:3857'
-  });
-
   return new Map({
     target: 'map',
     layers: [
@@ -31,7 +26,7 @@ export default async function () {
         zIndex: 10,
         opacity: 0.5,
         source: new MBTilesRasterSource({
-          ...metadata,
+          ...await importMBTiles({ url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles' }),
           attributions: [
             'IGN / Mapotempo',
             'BD Ortho 5m',
