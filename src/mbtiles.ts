@@ -1,8 +1,8 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
-import { ProjectionLike, get as getProjection } from 'ol/proj';
-import { getWidth } from 'ol/extent';
-import TileGrid from 'ol/tilegrid/TileGrid';
+import { ProjectionLike, get as getProjection } from 'ol/proj.js';
+import { getWidth } from 'ol/extent.js';
+import TileGrid from 'ol/tilegrid/TileGrid.js';
 
 export interface Metadata {
   pool: Promise<SQLiteHTTPPool>;
@@ -77,9 +77,9 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
       throw new Error('Could not load metadata');
     })
     .then((md) => {
-      if (!formats[md.format])
-        console.warn('Unknown tile format', md.format);
-      if (formats[md.format] === 'raster') {
+      if (!formats[md.format.toLowerCase()])
+        console.warn('Unknown tile format', md.format.toLowerCase());
+      if (formats[md.format.toLowerCase()] === 'raster') {
         // Sometimes, I wonder if Mapbox doesn't hold a patent or some
         // other kind of investment related to everyone using 3857
         const projection = opt.projection ?? 'EPSG:3857';

@@ -3,7 +3,7 @@ import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 import ImageTileSource, { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
-import TileGrid from 'ol/tilegrid/TileGrid';
+import TileGrid from 'ol/tilegrid/TileGrid.js';
 
 import { Metadata } from './mbtiles';
 
