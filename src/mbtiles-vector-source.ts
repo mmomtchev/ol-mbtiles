@@ -1,33 +1,13 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
-import VectorTileSource, { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
+import VectorTileSource from 'ol/source/VectorTile.js';
 import VectorTile from 'ol/VectorTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 import Feature from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
-import { Metadata } from './mbtiles';
+import { MBTilesVectorOptions } from './mbtiles';
 import { MBTilesFormat } from './mbtiles-format';
-
-export interface Options extends VectorTileOptions {
-  /**
-   * Number of parallel workers to use for retrieving tiles, @default 4
-   */
-  sqlWorkers?: number;
-  /**
-   * List of layer names to selectively include, @default everything
-   */
-  layers?: string[];
-
-  /**
-   * Optional already open SQLiteHTTP pool (mutually exclusive with url)
-   */
-  pool?: Promise<SQLiteHTTPPool>;
-
-  tileUrlFunction?: never;
-  tileLoadFunction?: never;
-  format?: never;
-}
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -44,9 +24,8 @@ export interface Options extends VectorTileOptions {
  */
 export class MBTilesVectorSource extends VectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
-  metadata: Promise<Metadata | null>;
 
-  constructor(options: Options) {
+  constructor(options: MBTilesVectorOptions) {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 

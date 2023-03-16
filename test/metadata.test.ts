@@ -1,5 +1,4 @@
-import { importMBTiles, } from '../dist/index.js';
-import { Metadata } from '../dist/mbtiles.js';
+import { importMBTiles, MBTilesRasterOptions, MBTilesVectorOptions, } from '../dist/index.js';
 
 import TileGrid from 'ol/tilegrid/TileGrid.js';
 
@@ -7,7 +6,7 @@ import { assert } from 'chai';
 
 describe('importMBTiles', () => {
   it('can shovel raster data', (done) => {
-    importMBTiles({
+    importMBTiles<MBTilesRasterOptions>({
       url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
       sqlWorkers: 1
     })
@@ -17,7 +16,6 @@ describe('importMBTiles', () => {
 
           assert.strictEqual(md?.maxZoom, 16);
           assert.strictEqual(md?.minZoom, 9);
-          assert.strictEqual(md?.format, 'jpg');
           assert.isString(md?.attributions);
           assert.instanceOf(md?.tileGrid, TileGrid);
           assert.lengthOf(md?.tileGrid?.getResolutions() as number[], 17);
@@ -37,7 +35,7 @@ describe('importMBTiles', () => {
 
           done();
         } finally {
-          (md as Metadata).pool.then((p) => p.close());
+          md?.pool?.then((p) => p.close());
         }
       })
       .catch((e) => {
@@ -46,7 +44,7 @@ describe('importMBTiles', () => {
   });
 
   it('can shovel vector data', (done) => {
-    importMBTiles({
+    importMBTiles<MBTilesVectorOptions>({
       url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
       sqlWorkers: 1
     })
@@ -56,13 +54,13 @@ describe('importMBTiles', () => {
 
           assert.strictEqual(md?.maxZoom, 14);
           assert.strictEqual(md?.minZoom, 0);
-          assert.strictEqual(md?.format, 'pbf');
           assert.isString(md?.attributions);
           assert.isString(md?.url);
 
           done();
         } finally {
-          (md as Metadata).pool.then((p) => p.close());
+          console.log(md);
+          md?.pool?.then((p) => p.close());
         }
       })
       .catch((e) => {

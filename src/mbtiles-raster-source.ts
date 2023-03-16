@@ -1,45 +1,10 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 
-import ImageTileSource, { Options as ImageTileOptions } from 'ol/source/TileImage.js';
+import ImageTileSource from 'ol/source/TileImage.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
-import TileGrid from 'ol/tilegrid/TileGrid.js';
 
-import { Metadata } from './mbtiles';
-
-export interface Options extends ImageTileOptions {
-  /**
-   * Number of parallel workers to use for retrieving tiles, @default 4
-   */
-  sqlWorkers?: number;
-  /**
-   * List of layer names to selectively include, @default everything
-   */
-  layers?: string[];
-
-  tileUrlFunction?: never;
-  tileLoadFunction?: never;
-
-  /**
-   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
-   */
-  minZoom?: number;
-
-  /**
-   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
-   */
-  maxZoom?: number;
-
-  /**
-   * Optional tile grid, refer to the Openlayers manual
-   */
-  tileGrid?: TileGrid;
-
-  /**
-   * Optional already open SQLiteHTTP pool (mutually exclusive with url)
-   */
-  pool?: Promise<SQLiteHTTPPool>;
-}
+import { MBTilesRasterOptions } from './mbtiles';
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -56,12 +21,11 @@ export interface Options extends ImageTileOptions {
  */
 export class MBTilesRasterSource extends ImageTileSource {
   private pool: Promise<SQLiteHTTPPool>;
-  metadata: Promise<Metadata | null>;
 
   /**
-   * @param {Options} options options
+   * @param {MBTilesRasterOptions} options options
    */
-  constructor(options: Options) {
+  constructor(options: MBTilesRasterOptions) {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 
