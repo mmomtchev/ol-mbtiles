@@ -25,14 +25,9 @@ export default async function () {
       new ImageTileLayer({
         zIndex: 10,
         opacity: 0.5,
-        source: new MBTilesRasterSource({
-          ...await importMBTiles({ url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles' }),
-          attributions: [
-            'IGN / Mapotempo',
-            'BD Ortho 5m',
-            'https://www.data.gouv.fr/en/datasets/pyramide-de-tuiles-depuis-la-bd-ortho-r/'
-          ]
-        }),
+        source: new MBTilesRasterSource(
+          await importMBTiles({ url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles' }),
+        ),
       })
     ],
     view: new View({

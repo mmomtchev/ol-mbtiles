@@ -11,6 +11,7 @@ export interface Metadata {
   maxZoom?: number;
   format?: string;
   resolutions?: number[];
+  attritubtions: string;
   [key: string]: unknown;
 }
 
@@ -84,6 +85,7 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
         const projection = opt.projection ?? 'EPSG:3857';
         const maxZoom = opt.maxZoom ?? md.maxZoom;
         const minZoom = opt.minZoom ?? md.minZoom;
+        const attributions = md.attribution ?? md.description;
         const projExtent = getProjection(projection)?.getExtent?.();
         if (maxZoom === undefined || minZoom === undefined || projExtent === undefined)
           throw new Error('Cannot determine tilegrid, need minZoom, maxZoom and projection');
@@ -95,6 +97,7 @@ export function importMBTiles(opt: Options): Promise<Metadata | null> {
         md.maxZoom = maxZoom;
         md.resolutions = resolutions;
         md.projection = projection;
+        md.attributions = attributions;
         md.tileGrid = new TileGrid({
           extent: projExtent,
           minZoom,
