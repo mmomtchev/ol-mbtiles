@@ -5,6 +5,7 @@ import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 
 import { MBTilesRasterOptions } from './mbtiles';
+import { debug } from './debug';
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -46,7 +47,7 @@ export class MBTilesRasterSource extends ImageTileSource {
   }
 
   private tileLoader(tile: ImageTile, _url: string) {
-    console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
+    debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     const image = tile.getImage() as HTMLImageElement;
     this.pool
       .then((p) =>

@@ -8,6 +8,7 @@ import { Geometry } from 'ol/geom.js';
 
 import { MBTilesVectorOptions } from './mbtiles';
 import { MBTilesFormat } from './mbtiles-format';
+import { debug } from './debug';
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -49,7 +50,7 @@ export class MBTilesVectorSource extends VectorTileSource {
   }
 
   private tileLoader(tile: VectorTile, _url: string) {
-    console.debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
+    debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       this.pool
         .then((p) =>

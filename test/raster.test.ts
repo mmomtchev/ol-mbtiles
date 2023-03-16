@@ -34,7 +34,6 @@ describe('MBTilesRasterSource', () => {
       loadFn(tile as unknown as Tile, '');
     } catch (e) {
       done(e);
-      console.log('out', source);
       if (source)
         source.dispose();
     }
@@ -68,7 +67,6 @@ describe('MBTilesRasterSource', () => {
       loadFn(tile as unknown as Tile, '');
     } catch (e) {
       done(e);
-      console.log('out', source);
       if (source)
         source.dispose();
     }

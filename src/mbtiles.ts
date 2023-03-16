@@ -5,6 +5,7 @@ import { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
 import { get as getProjection } from 'ol/proj.js';
 import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
+import { debug } from './debug';
 
 export interface MBTilesRasterOptions extends ImageTileOptions {
   /**
@@ -113,13 +114,9 @@ return pool
       const data = r.reduce((a, x) => {
         a[x.row[0] as string] = x.row[1];
         return a;
-      }, {}) as Record<string, number>;
-      console.debug('Loaded metadata', data);
-      return {
-        ...data,
-        pool,
-        url: opt.url
-      };
+      }, {}) as Record<string, string | number>;
+      debug('Loaded metadata', data);
+      return data;
     }
     throw new Error('Could not load metadata');
   })

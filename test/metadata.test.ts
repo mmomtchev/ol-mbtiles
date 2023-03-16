@@ -59,7 +59,6 @@ describe('importMBTiles', () => {
 
           done();
         } finally {
-          console.log(md);
           md?.pool?.then((p) => p.close());
         }
       })
