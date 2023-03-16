@@ -19,12 +19,12 @@ export default async function () {
         source: new TileDebug()
       }),
       new TileLayer({
-        zIndex: 0,
+        zIndex: 10,
+        opacity: 0.4,
         source: new OSM(),
       }),
       new ImageTileLayer({
-        zIndex: 10,
-        opacity: 0.5,
+        zIndex: 0,
         source: new MBTilesRasterSource(
           await importMBTiles({ url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles' }),
         ),
