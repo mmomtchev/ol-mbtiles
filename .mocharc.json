@@ -8,5 +8,9 @@
   "reporter": "tap",
   "timeout": 30000,
   "v8-expose-gc": true,
-  "loader": "ts-node/esm"
+  "loader": "ts-node/esm",
+  "node-option": [
+    "no-warnings",
+    "loader=ts-node/esm"
+  ]
 }

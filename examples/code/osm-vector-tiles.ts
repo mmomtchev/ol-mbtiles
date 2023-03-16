@@ -5,7 +5,7 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
-import { MBTilesSource } from 'ol-mbtiles';
+import { MBTilesVectorSource } from 'ol-mbtiles';
 import { waterStyle, roadStyle, buildingStyle, boundaryStyle, placeStyle } from '../style';
 
 // MBTiles from
@@ -21,7 +21,7 @@ export default function () {
         source: new TileDebug()
       }),
       new VectorTileLayer({
-        source: new MBTilesSource({
+        source: new MBTilesVectorSource({
           url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
           layers: ['transportation', 'water', 'waterway', 'landuse', 'place', 'boundary'],
           attributions: ['MapTiler', 'OSM', 'https://data.maptiler.com/downloads/dataset/osm/europe/'],

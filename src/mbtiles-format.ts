@@ -7,7 +7,7 @@ import Projection from 'ol/proj/Projection.js';
 import RenderFeature from 'ol/render/Feature.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Type } from 'ol/geom/Geometry';
+import { Type } from 'ol/geom/Geometry.js';
 
 declare module '@mapbox/vector-tile' {
   interface VectorTileFeature {
@@ -124,5 +124,4 @@ export class MBTilesFormat extends FeatureFormat {
   readProjection() {
     return this.dataProjection;
   }
-
 }

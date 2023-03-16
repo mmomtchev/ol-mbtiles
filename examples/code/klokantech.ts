@@ -6,7 +6,7 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
-import { MBTilesSource } from 'ol-mbtiles';
+import { MBTilesVectorSource } from 'ol-mbtiles';
 import { styleBorder } from '../style';
 
 // MBTiles from
@@ -23,7 +23,7 @@ export default function () {
         source: new TileDebug()
       }),
       new VectorTileLayer({
-        source: new MBTilesSource({
+        source: new MBTilesVectorSource({
           url: 'https://velivole.b-cdn.net/mbtiles/countries.mbtiles',
           minZoom: 0,
           maxZoom: 6
