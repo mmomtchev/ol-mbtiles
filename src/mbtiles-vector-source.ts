@@ -6,7 +6,7 @@ import { TileCoord } from 'ol/tilecoord.js';
 import Feature from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
-import { loadMBTilesMetadata, Metadata } from './metadata';
+import { Metadata } from './mbtiles';
 import { MBTilesFormat } from './mbtiles-format';
 
 export interface Options extends VectorTileOptions {
@@ -18,6 +18,11 @@ export interface Options extends VectorTileOptions {
    * List of layer names to selectively include, @default everything
    */
   layers?: string[];
+
+  /**
+   * Optional already open SQLiteHTTP pool (mutually exclusive with url)
+   */
+  pool?: Promise<SQLiteHTTPPool>;
 
   tileUrlFunction?: never;
   tileLoadFunction?: never;
@@ -32,35 +37,36 @@ export interface Options extends VectorTileOptions {
  * objects, special care must be taken to properly dispose of them.
  * An MBTilesSource creates a thread pool that the JS engine is unable to
  * automatically garbage-collect unless the dispose() method
- * is invoked. Check loadExample() in
+ * is invoked.
+ * If you need to dispose a map that can potentially contain
+ * MBTilesSource objects, check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
- * for an example implementation that properly disposes of a Map
- * containing MBTilesSource
  */
 export class MBTilesVectorSource extends VectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
   metadata: Promise<Metadata | null>;
 
   constructor(options: Options) {
-    super({
+    if (options.url === undefined && options.pool === undefined)
+      throw new Error('Must specify url');
+
+      super({
       ...options,
       url: undefined,
       format: new MBTilesFormat({
         layers: options.layers
       }),
       // This is required to prevent Openlayers' cache from thinking that all tiles share the same URL
-      tileUrlFunction: (coords: TileCoord) => `${coords[0]}:${coords[1]}:${coords[2]}`
+      tileUrlFunction: (coords: TileCoord) => `${options.url}#${coords[0]}:${coords[1]}:${coords[2]}`
     });
 
     this.setTileLoadFunction(this.tileLoader.bind(this));
 
-    this.pool = createSQLiteHTTPPool({
+    this.pool = options.pool ?? createSQLiteHTTPPool({
       workers: options.sqlWorkers ?? 4,
       httpOptions: { maxPageSize: 4096 }
     })
       .then((pool) => pool.open(options.url).then(() => pool));
-
-    this.metadata = loadMBTilesMetadata(this.pool, options);
   }
 
   private tileLoader(tile: VectorTile, _url: string) {

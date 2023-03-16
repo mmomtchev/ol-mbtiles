@@ -8,7 +8,8 @@ const examples = {
   'velivole': 'Towns from velivole.fr, vector EPSG: 4326',
   'klokantech': 'Borders from klokantech, vector EPSG: 3857',
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, vector EPSG: 3857',
-  'reunion-raster': 'Mapotempo, BD Ortho 5m, La Réunion, raster EPSG: 3857'
+  'reunion-raster': 'IGN / Mapotempo, BD Ortho 5m, La Réunion, raster EPSG: 3857',
+  'async-init': 'Automatic asynchronous initialization from MBTiles metadata'
 };
 
 let map: Map | null = null;
@@ -33,8 +34,13 @@ async function loadExample() {
     }
     map.dispose();
   }
-  code.then((mod) => {
-    map = mod.default();
+  code.then(async (mod) => {
+    const r = mod.default();
+    if (r instanceof Promise) {
+      map = await r;
+    } else {
+      map = r;
+    }
   });
   text.then((s) => $('#text').html(s.default));
 }

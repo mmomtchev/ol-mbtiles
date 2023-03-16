@@ -5,7 +5,7 @@ import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 import TileGrid from 'ol/tilegrid/TileGrid';
 
-import { loadMBTilesMetadata, Metadata } from './metadata';
+import { Metadata } from './mbtiles';
 
 export interface Options extends ImageTileOptions {
   /**
@@ -21,9 +21,24 @@ export interface Options extends ImageTileOptions {
   tileLoadFunction?: never;
 
   /**
+   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+   */
+  minZoom?: number;
+
+  /**
+   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+   */
+  maxZoom?: number;
+
+  /**
    * Optional tile grid, refer to the Openlayers manual
    */
   tileGrid?: TileGrid;
+
+  /**
+   * Optional already open SQLiteHTTP pool (mutually exclusive with url)
+   */
+  pool?: Promise<SQLiteHTTPPool>;
 }
 
 /**
@@ -34,35 +49,36 @@ export interface Options extends ImageTileOptions {
  * objects, special care must be taken to properly dispose of them.
  * An MBTilesSource creates a thread pool that the JS engine is unable to
  * automatically garbage-collect unless the dispose() method
- * is invoked. Check loadExample() in
+ * is invoked.
+ * If you need to dispose a map that can potentially contain
+ * MBTilesSource objects, check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
- * for an example implementation that properly disposes of a Map
- * containing MBTilesSource
  */
 export class MBTilesRasterSource extends ImageTileSource {
   private pool: Promise<SQLiteHTTPPool>;
   metadata: Promise<Metadata | null>;
 
+  /**
+   * @param {Options} options options
+   */
   constructor(options: Options) {
+    if (options.url === undefined && options.pool === undefined)
+      throw new Error('Must specify url');
+
     super({
       ...options,
       url: undefined,
       // This is required to prevent Openlayers' cache from thinking that all tiles share the same URL
-      tileUrlFunction: (coords: TileCoord) => `${coords[0]}:${coords[1]}:${coords[2]}`
+      tileUrlFunction: (coords: TileCoord) => `${options.url}#${coords[0]}:${coords[1]}:${coords[2]}`
     });
 
     this.setTileLoadFunction(this.tileLoader.bind(this));
 
-    this.pool = createSQLiteHTTPPool({
+    this.pool = options.pool ?? createSQLiteHTTPPool({
       workers: options.sqlWorkers ?? 4,
       httpOptions: { maxPageSize: 4096 }
     })
       .then((pool) => pool.open(options.url).then(() => pool));
-
-    this.metadata = loadMBTilesMetadata(this.pool, {
-      minZoom: options.tileGrid.getMinZoom(),
-      maxZoom: options.tileGrid.getMaxZoom()
-    });
   }
 
   private tileLoader(tile: ImageTile, _url: string) {
@@ -80,7 +96,7 @@ export class MBTilesRasterSource extends ImageTileSource {
         ))
       .then((r) => {
         if (r && r[0]) {
-          if(r[0].row[0] instanceof Uint8Array) {
+          if (r[0].row[0] instanceof Uint8Array) {
             const blob = new Blob([r[0].row[0] as Uint8Array]);
             const imageUrl = URL.createObjectURL(blob);
             image.src = imageUrl;
