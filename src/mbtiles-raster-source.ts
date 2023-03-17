@@ -71,7 +71,7 @@ export class MBTilesRasterSource extends ImageTileSource {
         throw new Error(`No data for ${tile.tileCoord}`);
       })
       .catch((e) => {
-        console.warn(e);
+        debug(e);
         tile.setState(TileState.ERROR);
       });
   }
