@@ -14,7 +14,7 @@ This project is based upon the very recent SQLite WASM version and it is inspire
 
 Version 2.0 is based on my [sqlite-wasm-http](https://github.com/mmomtchev/sqlite-wasm-http). If you are interested in working with MBTiles in the browser without using Openlayers, you should probably start there.
 
-The current version supports both raster and vector MBTiles with multiple parallel connections to the remote host. It requires [WebAssembly](https://caniuse.com/wasm) support in the browser which is available in 95.54% of the currently installed user base. If [`SharedArrayBuffer`](https://web.dev/coop-coep/) is auto-detected, it also supports cache sharing between workers, allowing for a significant performance and efficiency boost.
+The current version supports both raster and vector MBTiles with multiple parallel connections to the remote host. It requires [WebAssembly](https://caniuse.com/wasm) support in the browser which, as of March 2023, is available in 95.54% of the currently installed user base. If [`SharedArrayBuffer`](https://web.dev/coop-coep/) is auto-detected, it can support cache sharing between workers, allowing for a significant performance and efficiency boost.
 
 Both raster and vector tilesets are supported.
 
