@@ -12,7 +12,7 @@ Openlayers plugin for rendering remote vector tile sets in `MBTiles` format over
 
 This project is based upon the very recent SQLite WASM version and it is inspired by the prior work of [@phiresky](https://github.com/phiresky/sql.js-httpvfs).
 
-Version 2.0 is based on my [sqlite-wasm-http](https://github.com/mmomtchev/sqlite-wasm-http). If you are interested in working with MBTiles in the browser without using Openlayers, you should probably start there.
+Version 2.0 is based on my [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http). If you are interested in working with MBTiles in the browser without using Openlayers, you should probably start there.
 
 The current version supports both raster and vector MBTiles with multiple parallel connections to the remote host. It requires [WebAssembly](https://caniuse.com/wasm) support in the browser which, as of March 2023, is available in 95.54% of the currently installed user base. If [`SharedArrayBuffer`](https://web.dev/coop-coep/) is auto-detected, it can support cache sharing between workers, allowing for a significant performance and efficiency boost.
 
@@ -93,7 +93,6 @@ sqlite> pragma page_size = 1024;
 sqlite> vacuum;
 ```
 
-
 # Examples
 
 You can check a Github-hosted live demo with examples: [https://mmomtchev.github.io/ol-mbtiles/#osm-vector-tiles](https://mmomtchev.github.io/ol-mbtiles/#osm-vector-tiles)
@@ -108,6 +107,10 @@ Or to run it locally in developer mode:
 - `npm install`
 - `npm run start`
 - Open `http://localhost:9000`
+
+# Bundling
+
+Because it uses [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http), it requires very recent versions of all bundlers. Be sure to check `sqlite-wasm-http` page for more details if you have problems bundling.
 
 # Performance
 
