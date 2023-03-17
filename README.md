@@ -1,6 +1,6 @@
 # ol-mbtiles
 
-Openlayers plugin for rendering remote vector tile sets in `MBTiles` format
+Openlayers plugin for rendering remote vector tile sets in `MBTiles` format over bare-bones HTTP
 
 [![License: ISC](https://img.shields.io/github/license/mmomtchev/ol-mbtiles)](https://github.com/mmomtchev/ol-mbtiles/blob/main/LICENSE)
 [![Node.js CI](https://github.com/mmomtchev/ol-mbtiles/actions/workflows/node.js.yml/badge.svg)](https://github.com/mmomtchev/ol-mbtiles/actions/workflows/node.js.yml)
@@ -10,20 +10,13 @@ Openlayers plugin for rendering remote vector tile sets in `MBTiles` format
 
 `EXPERIMENTAL`
 
-This project started as a quick hack built upon another quick hack by [@phiresky](https://github.com/phiresky/sql.js-httpvfs) - namely using `HTTP` `RANGE` requests to implement a VFS-like interface to access remote SQLite databases using only the HTTP protocol. His bundle includes SQLite3 compiled to WebAssembly from the [sql.js](https://github.com/sql-js/sql.js/) project.
+This project is based upon the very recent SQLite WASM version and it is inspired by the prior work of [@phiresky](https://github.com/phiresky/sql.js-httpvfs).
 
-**Currently there is only a vector tile driver, there won't be raster support in 1.0**
+Version 2.0 is based on my [sqlite-wasm-http](https://github.com/mmomtchev/sqlite-wasm-http). If you are interested in working with MBTiles in the browser without using Openlayers, you should probably start there.
 
-# SQLite optimization
+The current version supports both raster and vector MBTiles with multiple parallel connections to the remote host. It requires [WebAssembly](https://caniuse.com/wasm) support in the browser which is available in 95.54% of the currently installed user base. If [`SharedArrayBuffer`](https://web.dev/coop-coep/) is auto-detected, it also supports cache sharing between workers, allowing for a significant performance and efficiency boost.
 
-Don't forget to prepare your SQLite tables (otherwise it will still work, but much slower):
-
-```
-$ sqlite3 yourtiles.mbtiles
-sqlite> pragma journal_mode = delete;
-sqlite> pragma page_size = 1024;
-sqlite> vacuum;
-```
+Both raster and vector tilesets are supported.
 
 # Quickstart
 
@@ -31,18 +24,20 @@ sqlite> vacuum;
 npm install ol-mbtiles
 ```
 
+Manual layer configuration (require prior knowledge of the metadata parameters):
+
 ```js
 import Map from "ol/Map.js";
 import View from "ol/View.js";
 import VectorTileLayer from "ol/layer/VectorTile";
 import { fromLonLat } from "ol/proj";
-import { MBTilesSource } from "ol-mbtiles";
+import { MBTilesVectorSource } from "ol-mbtiles";
 
 const map = new Map({
   target: "map",
   layers: [
     new VectorTileLayer({
-      source: new MBTilesSource({
+      source: new MBTilesVectorSource({
         url: "https://server/path/file.mbtiles",
         layers: ["transportation", "water", "waterway"],
         maxZoom: 12,
@@ -57,23 +52,53 @@ const map = new Map({
 });
 ```
 
-Keep in mind that while webpack is capable of automatically discovering and bundling the worker and the `sql.js` WASM bundle, most other bundlers are not and will need manual configuration.
-
-Here is a solution that works in Vite:
+Automatic discovery of all parameters (requires asynchronous code):
 
 ```js
-import { MBTilesSource } from "ol-mbtiles";
-import workerUrl from "sql.js-httpvfs/dist/sqlite.worker.js?url";
-import wasmUrl from "sql.js-httpvfs/dist/sql-wasm.wasm?url";
-MBTilesSource.workerUrl = workerUrl;
-MBTilesSource.wasmUrl = wasmUrl;
+import Map from "ol/Map.js";
+import View from "ol/View.js";
+import VectorTileLayer from "ol/layer/VectorTile";
+import { fromLonLat } from "ol/proj";
+import { importMBTiles, MBTilesVectorSource } from "ol-mbtiles";
+
+const map = new Map({
+  target: "map",
+  layers: [
+    new VectorTileLayer({
+      source: new MBTilesVectorSource(await importMBTiles({
+        url: "https://server/path/file.mbtiles",
+        layers: ["transportation", "water", "waterway"]
+      })),
+    }),
+  ],
+  view: new View({
+    center: fromLonLat([12, 50]),
+    zoom: 6,
+  }),
+});
 ```
+
+# SQLite optimization
+
+It is recommended to reduce the page size of your SQLite tables (otherwise it will still work, but it will be slower):
+
+```
+$ sqlite3 yourtiles.mbtiles
+sqlite> pragma journal_mode = delete;
+sqlite> pragma page_size = 1024;
+sqlite> vacuum;
+```
+
 
 # Examples
 
-Check the demo for examples: https://mmomtchev.github.io/ol-mbtiles/
+You can check a Github-hosted live demo with examples: [https://mmomtchev.github.io/ol-mbtiles/#osm-vector-tiles](https://mmomtchev.github.io/ol-mbtiles/#osm-vector-tiles)
+- this is the performance you should expect if you cannot set custom HTTP headers
 
-Or run it locally:
+You can also see it working in a COOP/COEP-enabled environment here: [https://ol-mbtiles.momtchev.com/#osm-vector-tiles](https://ol-mbtiles.momtchev.com/#osm-vector-tiles)
+- this is the full performance
+
+Or to run it locally in developer mode:
 
 - Checkout the code
 - `npm install`
@@ -86,6 +111,7 @@ Generally, the cost of handling an `.mbtiles`-based source is higher than that o
 
 There are some caveats though:
 
+- First and foremost, if your hosting provider allows setting of custom HTTP headers, enable COOP/COEP on all costs - you will get a very significant boost
 - The first initialization requires the downloading of the 849KB SQLite3 `.wasm` binary and the 650KB SQLite3 JS glue code - subsequent visits of the same map will probably load these from the cache
 - These can be brought down to 170KB for the JS bundle and 400KB for the `.wasm` binary - if compression on your web server is enabled for the `application/wasm` MIME-type - **which is not the case in the default configuration of nginx or Apache**
 - Downloading of the very first tile requires the downloading of the SQLite3 headers and the index locations and it can also be somewhat slower
@@ -94,16 +120,4 @@ There are some caveats though:
 
 # Roadmap
 
-The next version will use my brand new [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http) project that includes many improvements over the original HTTP VFS driver, including shared cache for concurrent DB connections.
-
-I have planned:
-- Drop-in replacement for the current version
-- Built-in support for multiple shared connections to the database with cache sharing
-- MBTiles and GeoPackage support
-- Vector and raster data
-
-The first preliminary results are very encouraging, with MBTiles over HTTP from CDN server loading faster than most commercial map services.
-
-The loading of the very first frame is still somewhat slower - mostly due to the time needed to load the almost 1MB SQLite `.wasm` binary - but once this has been cached, subsequent visits of the same page start rendering much faster.
-
-You can see a live demo of the upcoming release here: [https://ol-mbtiles.momtchev.com/#osm-vector-tiles](https://ol-mbtiles.momtchev.com/#osm-vector-tiles)
+* Add OGC GeoPackage support
