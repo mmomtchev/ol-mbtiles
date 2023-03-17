@@ -1,4 +1,4 @@
-import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
+import { createSQLiteHTTPPool, SQLiteHTTPPool, VFSHTTP } from 'sqlite-wasm-http';
 
 import { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
@@ -89,6 +89,16 @@ const formats: Record<string, 'raster' | 'vector'> = {
   'mvt': 'vector'
 };
 
+export function httpPoolOptions(options?: SQLOptions) {
+  return {
+    workers: options?.sqlWorkers ?? 4,
+    httpOptions: {
+      maxPageSize: options?.maxSqlPageSize ?? 4096,
+      cacheSize: options?.sqlCacheSize ?? 4096
+    } as VFSHTTP.Options,
+  };
+}
+
 /**
  * Automatically import MBTiles metadata and return an options object
  * compatible with the source constructors.
@@ -97,10 +107,7 @@ const formats: Record<string, 'raster' | 'vector'> = {
  * @returns {(MBTilesRasterOptions | MBTilesVectorOptions)}
  */
 export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T> {
-  const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool({
-    workers: opt.sqlWorkers ?? 4,
-    httpOptions: { maxPageSize: opt.maxSqlPageSize, cacheSize: opt.sqlCacheSize }
-  })
+  const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool(httpPoolOptions(opt))
     .then((pool) => pool.open(opt.url).then(() => pool));
 
   return pool

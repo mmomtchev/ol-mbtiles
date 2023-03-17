@@ -5,7 +5,7 @@ import Tile from 'ol/Tile.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 
-import { MBTilesRasterOptions, SQLOptions } from './mbtiles';
+import { httpPoolOptions, MBTilesRasterOptions, SQLOptions } from './mbtiles';
 import { debug } from './debug';
 
 /**
@@ -40,10 +40,7 @@ export class MBTilesRasterSource extends ImageTileSource {
 
     this.setTileLoadFunction(this.tileLoader.bind(this));
 
-    this.pool = options.pool ?? createSQLiteHTTPPool({
-      workers: options.sqlWorkers ?? 4,
-      httpOptions: { maxPageSize: 4096 }
-    })
+    this.pool = options.pool ?? createSQLiteHTTPPool(httpPoolOptions(options))
       .then((pool) => pool.open(options.url).then(() => pool));
   }
 

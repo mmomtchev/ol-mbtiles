@@ -6,7 +6,7 @@ import { TileCoord } from 'ol/tilecoord.js';
 import Feature from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
-import { MBTilesVectorOptions, SQLOptions } from './mbtiles';
+import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles';
 import { MBTilesFormat } from './mbtiles-format';
 import { debug } from './debug';
 import Tile from 'ol/Tile';
@@ -43,10 +43,7 @@ export class MBTilesVectorSource extends VectorTileSource {
 
     this.setTileLoadFunction(this.tileLoader.bind(this));
 
-    this.pool = options.pool ?? createSQLiteHTTPPool({
-      workers: options.sqlWorkers ?? 4,
-      httpOptions: { maxPageSize: 4096 }
-    })
+    this.pool = options.pool ?? createSQLiteHTTPPool(httpPoolOptions(options))
       .then((pool) => pool.open(options.url).then(() => pool));
   }
 
