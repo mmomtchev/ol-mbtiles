@@ -1,37 +1,81 @@
 import { MBTilesRasterSource } from '../dist/index.js';
 import { Tile } from 'ol';
 
-import { assert } from 'chai';
+import chai from 'chai';
+import spies from 'chai-spies';
+import { TileCoord } from 'ol/tilecoord.js';
+chai.use(spies);
+const assert = chai.assert;
+
+function setupMockSource(opt: {
+  url: string,
+  tileCoord: TileCoord,
+  setState?: (state: number) => void,
+  setImageSrc?: (url: string) => void,
+  onLoadStart?: () => void,
+  onLoadEnd?: () => void,
+  onLoadError?: () => void
+}) {
+  const source = new MBTilesRasterSource({ url: opt.url, sqlWorkers: 1 });
+  const loadFn = source.getTileLoadFunction();
+  const onLoadStart = chai.spy(opt.onLoadStart ?? (() => undefined));
+  const onLoadEnd = chai.spy(opt.onLoadStart ?? (() => undefined));
+  const onLoadError = chai.spy(opt.onLoadStart ?? (() => undefined));
+  const setState = chai.spy((state: number) => {
+    if (opt.setState)
+      opt.setState(state);
+    if (source)
+      source.dispose();
+  });
+  const setImageSrc = chai.spy(opt.setImageSrc ?? (() => undefined));
+  // These events do not work without a real Image polyfill
+  source.on('tileloadstart', onLoadStart);
+  source.on('tileloadend', onLoadEnd);
+  source.on('tileloaderror', onLoadError);
+
+  const tile = {
+    tileCoord: opt.tileCoord,
+    setState,
+    getImage: () => ({
+      set src(url: string) {
+        setImageSrc(url);
+        if (source)
+          source.dispose();
+      }
+    }) as unknown as HTMLImageElement
+  };
+
+  return {
+    source,
+    tile,
+    loadFn,
+    setState,
+    setImageSrc,
+    onLoadEnd,
+    onLoadStart,
+    onLoadError
+  };
+}
 
 describe('MBTilesRasterSource', () => {
   it('can shovel', (done) => {
     let source: MBTilesRasterSource | null = null;
     const tileCoord = [9, 334, 287];
     try {
-      source = new MBTilesRasterSource({
+      const mock = setupMockSource({
         url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
-        sqlWorkers: 1
-      });
-      const loadFn = source.getTileLoadFunction();
-      const tile = {
         tileCoord,
-        setState: () => {
-          done('Tile error');
-          if (source)
-            source.dispose();
+        setState: () => done('Tile error'),
+        setImageSrc: (url: string) => {
+          assert.isString(url);
+          assert.match(url, /^blob:nodedata:[a-z0-f-]+/);   
+          done();       
         },
-        getImage: () => ({
-          set src(url: string) {
-            assert.isString(url);
-            assert.match(url, /^blob:nodedata:[a-z0-f-]+/);
-            done();
-            if (source)
-              source.dispose();
-          }
-        }) as unknown as HTMLImageElement
-      };
+        onLoadError: () => done('Tile error')
+      });
+      source = mock.source;
 
-      loadFn(tile as unknown as Tile, '');
+      mock.loadFn(mock.tile as unknown as Tile, '');
     } catch (e) {
       done(e);
       if (source)
@@ -43,28 +87,16 @@ describe('MBTilesRasterSource', () => {
     let source: MBTilesRasterSource | null = null;
     const tileCoord = [8, 9, 3];
     try {
-      source = new MBTilesRasterSource({
+      const mock = setupMockSource({
         url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
-        sqlWorkers: 1
-      });
-      const loadFn = source.getTileLoadFunction();
-      const tile = {
         tileCoord,
-        setState: () => {
-          done();
-          if (source)
-            source.dispose();
-        },
-        getImage: () => ({
-          set src(url: string) {
-            done('Shoveled when it was not supposed to');
-            if (source)
-              source.dispose();
-          }
-        }) as unknown as HTMLImageElement
-      };
+        setImageSrc: () => done('It was not supposed to shovel'),
+        onLoadEnd: () => done('It was not supposed to shovel'),
+        setState: () => done()
+      });
+      source = mock.source;
 
-      loadFn(tile as unknown as Tile, '');
+      mock.loadFn(mock.tile as unknown as Tile, '');
     } catch (e) {
       done(e);
       if (source)

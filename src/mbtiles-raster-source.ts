@@ -4,6 +4,7 @@ import ImageTileSource from 'ol/source/TileImage.js';
 import Tile from 'ol/Tile.js';
 import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
+import TileState from 'ol/TileState.js';
 
 import { httpPoolOptions, MBTilesRasterOptions, SQLOptions } from './mbtiles';
 import { debug } from './debug';
@@ -67,9 +68,12 @@ export class MBTilesRasterSource extends ImageTileSource {
             return;
           }
         }
-        tile.setState(3);
+        throw new Error(`No data for ${tile.tileCoord}`);
       })
-      .catch(() => tile.setState(3));
+      .catch((e) => {
+        console.warn(e);
+        tile.setState(TileState.ERROR);
+      });
   }
 
   disposeInternal() {
