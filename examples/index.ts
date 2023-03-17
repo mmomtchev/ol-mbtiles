@@ -4,7 +4,7 @@ import 'prism-themes/themes/prism-vsc-dark-plus.css';
 import { Map } from 'ol';
 import Layer from 'ol/layer/Layer';
 
-const examples = {
+const examples: Record<string, string> = {
   'velivole': 'Towns from velivole.fr, vector EPSG: 4326',
   'klokantech': 'Borders from klokantech, vector EPSG: 3857',
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, vector EPSG: 3857',

@@ -5,13 +5,13 @@ import View from 'ol/View.js';
 import ImageTileLayer from 'ol/layer/Tile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat, get as getProjection } from 'ol/proj';
-import { getWidth } from 'ol/extent';
+import { Extent, getWidth } from 'ol/extent';
 
 import { MBTilesRasterSource } from 'ol-mbtiles';
 import TileGrid from 'ol/tilegrid/TileGrid';
 
-const projExtent = getProjection('EPSG:3857').getExtent();
-const baseResolution = getWidth(projExtent) / 256;
+const projExtent = getProjection('EPSG:3857')?.getExtent();
+const baseResolution = getWidth(projExtent as Extent) / 256;
 function resolutions(maxZoom: number): number[] {
   const r = [ baseResolution ];
   for (let z = 1; z <= maxZoom; z++)

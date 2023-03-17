@@ -1,7 +1,7 @@
-import Feature from 'ol/Feature';
+import { FeatureLike } from 'ol/Feature';
 import { Style, Text, Fill, Stroke, Circle } from 'ol/style';
 
-export function styleTown(size: number, feature: Feature): Style {
+export function styleTown(size: number, feature: FeatureLike): Style {
   let width: number;
   let font: string;
   switch (size) {
@@ -61,8 +61,8 @@ export const styleBorder = new Style({
 
 
 // Styles inspired from https://openlayers.org/en/latest/examples/osm-vector-tiles.html
-const roadStyleCache = {};
-const roadColor = {
+const roadStyleCache: Record<string, Style> = {};
+const roadColor: Record<string, string> = {
   'motorway': '#776',
   'trunk': '#ccb',
   'highway': '#f39',
@@ -87,7 +87,7 @@ export const boundaryStyle = new Style({
     width: 2,
   }),
 });
-export const roadStyle = function (feature) {
+export const roadStyle = function (feature: FeatureLike) {
   const kind = feature.get('class');
   const railway = feature.get('railway');
   const sort_key = feature.get('sort_key');
@@ -125,9 +125,9 @@ const textStroke = new Stroke({
   color: 'white',
   width: 2
 });
-export const placeStyle = function (feature) {
+export const placeStyle = function (feature: FeatureLike): Style {
   if (feature.get('class') == 'country')
-    return null;
+    return null as unknown as Style;
   if (feature.get('name')) {
     const style = placeBase.clone();
     style.setText(new Text({
@@ -138,4 +138,5 @@ export const placeStyle = function (feature) {
     }));
     return style;
   }
+  return null as unknown as Style;
 };
