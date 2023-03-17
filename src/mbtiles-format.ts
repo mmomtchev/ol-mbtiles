@@ -52,7 +52,7 @@ export class MBTilesFormat extends FeatureFormat {
     this.idProperty_ = options.idProperty;
     this.extent = options.extent ?? 4096;
 
-    /**
+    /*
      * As this is the very first time MBTiles will be distributed by HTTP
      * there is still no official MIME type
      */

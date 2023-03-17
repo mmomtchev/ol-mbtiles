@@ -24,7 +24,7 @@ Both raster and vector tilesets are supported.
 npm install ol-mbtiles
 ```
 
-Manual layer configuration (require prior knowledge of the metadata parameters):
+## Manual layer configuration (require prior knowledge of the metadata parameters):
 
 ```js
 import Map from "ol/Map.js";
@@ -52,7 +52,7 @@ const map = new Map({
 });
 ```
 
-Automatic discovery of all parameters (requires asynchronous code):
+## Automatic discovery of all parameters (requires asynchronous code):
 
 ```js
 import Map from "ol/Map.js";
@@ -77,6 +77,10 @@ const map = new Map({
   }),
 });
 ```
+
+## Full API
+
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/docs/API.md](https://github.com/mmomtchev/ol-mbtiles/blob/main/docs/API.md)
 
 # SQLite optimization
 

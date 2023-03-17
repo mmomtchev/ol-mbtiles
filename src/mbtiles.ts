@@ -7,6 +7,9 @@ import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
 import { debug } from './debug';
 
+/**
+ * Options for creating a MBTilesRasterSource
+ */
 export interface MBTilesRasterOptions extends ImageTileOptions {
   /**
    * Number of parallel workers to use for retrieving tiles, @default 4
@@ -41,6 +44,9 @@ export interface MBTilesRasterOptions extends ImageTileOptions {
   pool?: Promise<SQLiteHTTPPool>;
 }
 
+/**
+ * Options for creating a MBTilesVectorSource
+ */
 export interface MBTilesVectorOptions extends VectorTileOptions {
   /**
    * Number of parallel workers to use for retrieving tiles, @default 4
@@ -61,7 +67,13 @@ export interface MBTilesVectorOptions extends VectorTileOptions {
   format?: never;
 }
 
+/**
+ * Shared options for all MBTiles
+ */
 export interface SQLOptions {
+  /**
+   * URL of the remote MBTiles source
+   */
   url: string;
   /**
    * Number of parallel workers to use for retrieving tiles, @default 4
@@ -103,7 +115,8 @@ export function httpPoolOptions(options?: SQLOptions) {
  * Automatically import MBTiles metadata and return an options object
  * compatible with the source constructors.
  * 
- * @param {(MBTilesRasterOptions | MBTilesVectorOptions) & SQLOptions} opt options
+ * @param {(MBTilesRasterOptions | MBTilesVectorOptions) & SQLOptions} opt Any MBTiles{Raster|Vector}Source options to be overridden
+ * @param {string} opt.url URL of the remote tileset
  * @returns {(MBTilesRasterOptions | MBTilesVectorOptions)}
  */
 export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T> {

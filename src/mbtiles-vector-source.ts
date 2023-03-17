@@ -27,6 +27,9 @@ import Tile from 'ol/Tile';
 export class MBTilesVectorSource extends VectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
 
+  /**
+   * @param {MBTilesVectorOptions} options options
+   */
   constructor(options: MBTilesVectorOptions & SQLOptions) {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
