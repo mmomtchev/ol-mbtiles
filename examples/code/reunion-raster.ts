@@ -4,26 +4,15 @@ import OSM from 'ol/source/OSM';
 import View from 'ol/View.js';
 import ImageTileLayer from 'ol/layer/Tile';
 import TileDebug from 'ol/source/TileDebug';
-import { fromLonLat, get as getProjection } from 'ol/proj';
-import { Extent, getWidth } from 'ol/extent';
+import { fromLonLat } from 'ol/proj';
 
-import { MBTilesRasterSource } from 'ol-mbtiles';
-import TileGrid from 'ol/tilegrid/TileGrid';
-
-const projExtent = getProjection('EPSG:3857')?.getExtent();
-const baseResolution = getWidth(projExtent as Extent) / 256;
-function resolutions(maxZoom: number): number[] {
-  const r = [ baseResolution ];
-  for (let z = 1; z <= maxZoom; z++)
-    r.push(r[r.length - 1] / 2);
-  return r;
-}
+import { importMBTiles, MBTilesRasterSource } from 'ol-mbtiles';
 
 // Raster MBTiles from
 // https://www.data.gouv.fr/en/datasets/pyramide-de-tuiles-depuis-la-bd-ortho-r/
 // 240MB original file
 
-export default function () {
+export default async function () {
   return new Map({
     target: 'map',
     layers: [
@@ -32,25 +21,15 @@ export default function () {
         source: new TileDebug()
       }),
       new TileLayer({
-        zIndex: 0,
+        zIndex: 10,
+        opacity: 0.4,
         source: new OSM(),
       }),
       new ImageTileLayer({
-        zIndex: 10,
-        opacity: 0.5,
-        source: new MBTilesRasterSource({
-          url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles',
-          attributions: [
-            'IGN / Mapotempo',
-            'BD Ortho 5m',
-            'https://www.data.gouv.fr/en/datasets/pyramide-de-tuiles-depuis-la-bd-ortho-r/'
-          ],
-          tileGrid: new TileGrid({
-            extent: projExtent,
-            minZoom: 9,
-            resolutions: resolutions(16)
-          })
-        }),
+        zIndex: 0,
+        source: new MBTilesRasterSource(
+          await importMBTiles({ url: 'https://velivole.b-cdn.net/tiles-RGR92UTM40S.mbtiles' }),
+        ),
       })
     ],
     view: new View({

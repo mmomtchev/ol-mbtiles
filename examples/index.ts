@@ -4,12 +4,14 @@ import 'prism-themes/themes/prism-vsc-dark-plus.css';
 import { Map } from 'ol';
 import Layer from 'ol/layer/Layer';
 
+// Alas, in MBTilesLand all projections are 3857, all angles are square and there is no poverty
+// TODO: Produce a non-3857 tileset
 const examples: Record<string, string> = {
-  'velivole': 'Towns from velivole.fr, vector EPSG: 4326',
+  'velivole': 'Towns from velivole.fr, vector EPSG: 3857',
   'klokantech': 'Borders from klokantech, vector EPSG: 3857',
   'osm-vector-tiles': 'OSM data for Europe from MapTiler, 34.4GB, vector EPSG: 3857',
   'reunion-raster': 'IGN / Mapotempo, BD Ortho 5m, La Réunion, raster EPSG: 3857',
-  'async-init': 'Automatic asynchronous initialization from MBTiles metadata'
+  'sync-init': 'Synchronous initialization when the metadata is known beforehand'
 };
 
 let map: Map | null = null;

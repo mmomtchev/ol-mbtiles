@@ -6,13 +6,13 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
-import { MBTilesVectorSource } from 'ol-mbtiles';
+import { importMBTiles, MBTilesVectorSource } from 'ol-mbtiles';
 import { styleBorder } from '../style';
 
 // MBTiles from
 // https://github.com/klokantech/vector-tiles-sample
 
-export default function () {
+export default async function () {
   return new Map({
     target: 'map',
     layers: [
@@ -23,11 +23,9 @@ export default function () {
         source: new TileDebug()
       }),
       new VectorTileLayer({
-        source: new MBTilesVectorSource({
+        source: new MBTilesVectorSource(await importMBTiles({
           url: 'https://velivole.b-cdn.net/mbtiles/countries.mbtiles',
-          minZoom: 0,
-          maxZoom: 6
-        }),
+        })),
         style: styleBorder
       })
     ],

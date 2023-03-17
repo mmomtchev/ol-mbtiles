@@ -6,10 +6,10 @@ import VectorTileLayer from 'ol/layer/VectorTile';
 import TileDebug from 'ol/source/TileDebug';
 import { fromLonLat } from 'ol/proj';
 
-import { MBTilesVectorSource as MBTilesSource } from 'ol-mbtiles';
+import { importMBTiles, MBTilesVectorSource } from 'ol-mbtiles';
 import { styleTown } from '../style';
 
-export default function () {
+export default async function () {
   return new Map({
     target: 'map',
     layers: [
@@ -20,31 +20,25 @@ export default function () {
         source: new TileDebug()
       }),
       new VectorTileLayer({
-        source: new MBTilesSource({
+        source: new MBTilesVectorSource(await importMBTiles({
           url: 'https://velivole.b-cdn.net/mbtiles/place/0.mbtiles',
-          minZoom: 0,
-          maxZoom: 12
-        }),
+        })),
         style: styleTown.bind(null, 0),
         renderBuffer: 1024,
         minZoom: 6
       }),
       new VectorTileLayer({
-        source: new MBTilesSource({
+        source: new MBTilesVectorSource(await importMBTiles({
           url: 'https://velivole.b-cdn.net/mbtiles/place/1.mbtiles',
-          minZoom: 0,
-          maxZoom: 12
-        }),
+        })),
         style: styleTown.bind(null, 1),
         renderBuffer: 256,
         minZoom: 8
       }),
       new VectorTileLayer({
-        source: new MBTilesSource({
+        source: new MBTilesVectorSource(await importMBTiles({
           url: 'https://velivole.b-cdn.net/mbtiles/place/2.mbtiles',
-          minZoom: 0,
-          maxZoom: 12
-        }),
+        })),
         style: styleTown.bind(null, 2),
         minZoom: 10
       }),

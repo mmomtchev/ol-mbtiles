@@ -2,7 +2,7 @@ import { createSQLiteHTTPPool, SQLiteHTTPPool, VFSHTTP } from 'sqlite-wasm-http'
 
 import { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
-import { get as getProjection } from 'ol/proj.js';
+import { get as getProjection, transformExtent } from 'ol/proj.js';
 import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
 import { debug } from './debug';
@@ -116,16 +116,16 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       if (r && r.length) {
         // Transform an array of form [ ['name', 'value' ], ... ] to object
         const data = r.reduce((a, x) => {
-          a[x.row[0] as string] = x.row[1] as string | number;
+          a[x.row[0] as string] = x.row[1] as string;
           return a;
-        }, {} as Record<string, string | number>);
+        }, {} as Record<string, string>);
         debug('Loaded metadata', data);
         return data;
       }
       throw new Error('Could not load metadata');
     })
-    .then((md: Record<string, unknown>) => {
-      const opts: T = {} as T;
+    .then((md) => {
+      const opts: T = {...opt} as T;
 
       const format = (md['format'] as string)?.toLowerCase?.();
       if (!formats[format])
@@ -135,9 +135,15 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       // other kind of investment related to everyone using 3857
       opts.projection = opt.projection ?? 'EPSG:3857';
       opts.attributions = (md.attribution ?? md.description) as string;
-      opts.maxZoom = opt.maxZoom ?? +(md['maxzoom'] as number);
-      opts.minZoom = opt.minZoom ?? +(md['minzoom'] as number);
+      opts.maxZoom = opt.maxZoom ?? +md['maxzoom'];
+      opts.minZoom = opt.minZoom ?? +md['minzoom'];
+
       const projExtent = getProjection(opts.projection)?.getExtent?.();
+      const bounds = md['bounds'];
+      const extent = bounds ?
+        transformExtent(bounds.split(',').map((r) => +r), 'EPSG:4326', opts.projection) :
+        projExtent;
+
       if (formats[format] === 'raster') {
         if (opts.maxZoom === undefined || opts.minZoom === undefined || projExtent === undefined)
           throw new Error('Cannot determine tilegrid, need minZoom, maxZoom');
@@ -145,11 +151,18 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
         const resolutions = [baseResolution];
         for (let z = 1; z <= opts.maxZoom; z++)
           resolutions.push(resolutions[resolutions.length - 1] / 2);
+
         opts.tileGrid = new TileGrid({
-          extent: projExtent,
+          origin: [projExtent[0], projExtent[2]],
+          extent,
           minZoom: opts.minZoom,
           resolutions
         });
+      } else {
+        const vectorOpts = opts as MBTilesVectorOptions;
+        // Alas VectorTileSource in Openlayers does not support
+        // constraining the extent while keeping the origin
+        vectorOpts.extent = projExtent;
       }
       opts.pool = pool;
       opts.url = opt.url;

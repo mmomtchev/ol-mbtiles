@@ -7,7 +7,7 @@ import { fromLonLat } from 'ol/proj';
 import Style from 'ol/style/Style';
 import { FeatureLike } from 'ol/Feature';
 
-import { MBTilesVectorSource } from 'ol-mbtiles';
+import { importMBTiles, MBTilesVectorSource } from 'ol-mbtiles';
 import { waterStyle, roadStyle, buildingStyle, boundaryStyle, placeStyle } from '../style';
 
 // MBTiles from
@@ -15,7 +15,7 @@ import { waterStyle, roadStyle, buildingStyle, boundaryStyle, placeStyle } from 
 // 34.4 GB original file
 // down to 19.2GB after vacuum (MapTiler, wtf?)
 
-export default function () {
+export default async function () {
   return new Map({
     target: 'map',
     layers: [
@@ -23,13 +23,12 @@ export default function () {
         source: new TileDebug()
       }),
       new VectorTileLayer({
-        source: new MBTilesVectorSource({
+        source: new MBTilesVectorSource(await importMBTiles({
           url: 'https://velivole.b-cdn.net/maptiler-osm-2017-07-03-v3.6.1-europe.mbtiles',
           layers: ['transportation', 'water', 'waterway', 'landuse', 'place', 'boundary'],
+          // All properties from the MBTiles data can be overridden
           attributions: ['MapTiler', 'OSM', 'https://data.maptiler.com/downloads/dataset/osm/europe/'],
-          maxZoom: 14,
-          minZoom: 0
-        }),
+        })),
         style: function (feature: FeatureLike): Style {
           switch (feature.get('layer')) {
             case 'water':
@@ -44,7 +43,6 @@ export default function () {
             case 'place':
               return placeStyle(feature);
             default:
-              // TODO Fix in Openlayers
               return null as unknown as Style;
           }
         }
