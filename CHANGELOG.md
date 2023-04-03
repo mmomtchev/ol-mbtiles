@@ -1,4 +1,4 @@
-## 2.0.1
+## 2.0.1 2023-04-03
 
 - Upgrade to the latest [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http)
 - Optimize the examples bundle size and significantly improve the initial loading times
