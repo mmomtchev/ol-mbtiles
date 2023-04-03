@@ -124,6 +124,7 @@ There are some caveats though:
 - Downloading of the very first tile requires the downloading of the SQLite3 headers and the index locations and it can also be somewhat slower
 - Each remote `.mbtiles` source requires that each DB worker connected to it runs in a separate browser thread with a separate SQLite3 instance - one should try to find a compromise between the memory used by each worker and the overall tile downloading performance - especially if using a large number of `.mbtiles` sources - as the memory requirements can become prohibitive
 - If continuously adding and removing layers, you should take care of properly disposing layers removed from the map as currently no JS engine can GC worker threads - they can only put them on hold without fully recovering the used memory which will remain committed until the browser tab is closed (or the user navigates away). The new ES12 `FinalizationRegistry` cannot solve this problem, as the number of threads will kill the JS engine much before the GC on the main thread has to start disposing objects.
+- Proper code splitting is paramount for fast startup times - `sqlite-wasm-http` uses dynamic `import()` to force the bundler to keep certain chunks separate so that they can be loaded only once between the main thread and the workers. Be sure to check what is loaded by the browser - the only sizeable chunk should be the WASM - at 400Kb gzipped - and it should be loaded only once.
 
 # Roadmap
 
