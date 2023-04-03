@@ -152,7 +152,7 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       opts.minZoom = opt.minZoom ?? +md['minzoom'];
 
       const projExtent = getProjection(opts.projection)?.getExtent?.();
-      const bounds = md['bounds'];
+      const bounds = md['bounds'] as string;
       const extent = bounds ?
         transformExtent(bounds.split(',').map((r) => +r), 'EPSG:4326', opts.projection) :
         projExtent;
