@@ -1,8 +1,9 @@
 const path = require('path');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 
-module.exports = {
+module.exports = (env, argv) => ({
   entry: './examples/index.ts',
   module: {
     rules: [
@@ -28,9 +29,10 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'examples/index.html'
-    })
+    }),
+    new PreloadWebpackPlugin()
   ],
-  devtool: 'inline-source-map',
+  devtool: argv.mode === 'production' ? 'source-map' : 'inline-source-map',
   devServer: {
     static: {
       directory: path.join(__dirname, 'examples'),
@@ -42,4 +44,4 @@ module.exports = {
     compress: true,
     port: 9000,
   }
-};
+});
