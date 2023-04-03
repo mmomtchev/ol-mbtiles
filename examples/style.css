@@ -19,3 +19,7 @@ html, body {
   width: 10rem;
   height: 99vh;
 }
+
+small {
+  font-size: 0.7rem;
+}

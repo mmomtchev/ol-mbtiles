@@ -3,6 +3,8 @@ import './style.css';
 import 'prism-themes/themes/prism-vsc-dark-plus.css';
 import { Map } from 'ol';
 import Layer from 'ol/layer/Layer';
+import pkgJson from '../package.json';
+import pkgLockJson from '../package-lock.json';
 
 // Alas, in MBTilesLand all projections are 3857, all angles are square and there is no poverty
 // TODO: Produce a non-3857 tileset
@@ -51,10 +53,12 @@ $(function () {
   const isolation = typeof crossOriginIsolated === 'undefined' || !crossOriginIsolated;
   $('#menu').empty();
   for (const e of Object.keys(examples)) {
-    $('#menu').append(`<button id="id-${e}" class="menu-btn btn btn-primary m-2 px-1" >${examples[e]}</button>`);
+    $('#menu').append(`<button id="id-${e}" class="menu-btn btn btn-primary m-0 mb-1 px-1" >${examples[e]}</button>`);
   }
-  $('#menu').append('<div class="mt-auto me-2 border p-1 bg-light d-flex flex-column"><div>Cross-Origin isolation:</div>' +
+  $('#menu').append('<div class="mt-auto me-2 mb-1 border p-1 bg-light d-flex flex-column"><div>Cross-Origin isolation:</div>' +
     `<div class="ms-auto">${isolation ? '<strong class="text-danger">disabled</strong>' : '<strong class="text-success">enabled</strong>'}</div></div>`);
+  $('#menu').append(`<small>ol-mbtiles@${pkgJson.version}</small>`);
+  $('#menu').append(`<small>sqlite-wasm-http@${pkgLockJson.packages['node_modules/sqlite-wasm-http'].version}</small>`);
 
   $('.menu-btn').on('click', (ev) => {
     window.location.hash = ev.target.id.slice(3);
