@@ -6,7 +6,7 @@ html, body {
 }
 
 #map, #main {
-  height: 99vh;
+  height: 100vh;
 }
 
 #text {
@@ -17,7 +17,7 @@ html, body {
 
 .menu {
   width: 10rem;
-  height: 99vh;
+  height: 100vh;
 }
 
 small {

@@ -55,7 +55,7 @@ $(function () {
   for (const e of Object.keys(examples)) {
     $('#menu').append(`<button id="id-${e}" class="menu-btn btn btn-primary m-0 mb-1 px-1" >${examples[e]}</button>`);
   }
-  $('#menu').append('<div class="mt-auto me-2 mb-1 border p-1 bg-light d-flex flex-column"><div>Cross-Origin isolation:</div>' +
+  $('#menu').append('<div class="mt-auto mb-1 border p-1 bg-light d-flex flex-column"><div>Cross-Origin isolation:</div>' +
     `<div class="ms-auto">${isolation ? '<strong class="text-danger">disabled</strong>' : '<strong class="text-success">enabled</strong>'}</div></div>`);
   $('#menu').append(`<small>ol-mbtiles@${pkgJson.version}</small>`);
   $('#menu').append(`<small>sqlite-wasm-http@${pkgLockJson.packages['node_modules/sqlite-wasm-http'].version}</small>`);
