@@ -125,7 +125,7 @@ export function httpPoolOptions(options?: SQLOptions) {
  * @param {string} opt.url URL of the remote tileset
  * @returns {(MBTilesRasterOptions | MBTilesVectorOptions)}
  */
-export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T> {
+export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T & SQLOptions> {
   const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool(httpPoolOptions(opt))
     .then((pool) => pool.open(opt.url).then(() => pool));
 
@@ -144,7 +144,7 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       throw new Error('Could not load metadata');
     })
     .then((md) => {
-      const opts: T = {...opt} as T;
+      const opts = {...opt} as T & SQLOptions;
 
       const format = (md['format'] as string)?.toLowerCase?.();
       if (!formats[format])

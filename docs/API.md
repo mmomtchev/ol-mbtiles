@@ -22,8 +22,9 @@
     *   [sqlWorkers][18]
     *   [maxSqlPageSize][19]
     *   [sqlCacheSize][20]
-*   [importMBTiles][21]
-    *   [Parameters][22]
+    *   [backendType][21]
+*   [importMBTiles][22]
+    *   [Parameters][23]
 
 ## MBTilesRasterOptions
 
@@ -35,25 +36,25 @@ Options for creating a MBTilesRasterSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][23]
+Type: [number][24]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][24]<[string][25]>
+Type: [Array][25]<[string][26]>
 
 ### minZoom
 
 Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
 
-Type: [number][23]
+Type: [number][24]
 
 ### maxZoom
 
 Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
 
-Type: [number][23]
+Type: [number][24]
 
 ### tileGrid
 
@@ -65,7 +66,7 @@ Type: TileGrid
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][26]\<SQLiteHTTPPool>
+Type: [Promise][27]\<SQLiteHTTPPool>
 
 ## MBTilesRasterSource
 
@@ -81,7 +82,7 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][27]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][28]
 
 ### Parameters
 
@@ -101,7 +102,7 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][27]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][28]
 
 ### Parameters
 
@@ -117,19 +118,19 @@ Options for creating a MBTilesVectorSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][23]
+Type: [number][24]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][24]<[string][25]>
+Type: [Array][25]<[string][26]>
 
 ### pool
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][26]\<SQLiteHTTPPool>
+Type: [Promise][27]\<SQLiteHTTPPool>
 
 ## SQLOptions
 
@@ -139,25 +140,31 @@ Shared options for all MBTiles
 
 URL of the remote MBTiles source
 
-Type: [string][25]
+Type: [string][26]
 
 ### sqlWorkers
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][23]
+Type: [number][24]
 
 ### maxSqlPageSize
 
 Maximum expected page size in bytes for SQLite3 files, @default 4096
 
-Type: [number][23]
+Type: [number][24]
 
 ### sqlCacheSize
 
 Memory to use for SQLite cache in KB, @default 4096
 
-Type: [number][23]
+Type: [number][24]
+
+### backendType
+
+Use a specific backend type, @default 'shared'
+
+Type: any
 
 ## importMBTiles
 
@@ -210,16 +217,18 @@ Returns **([MBTilesRasterOptions][1] | [MBTilesVectorOptions][12])**&#x20;
 
 [20]: #sqlcachesize
 
-[21]: #importmbtiles
+[21]: #backendtype
 
-[22]: #parameters-2
+[22]: #importmbtiles
 
-[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[23]: #parameters-2
 
-[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[27]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[28]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
