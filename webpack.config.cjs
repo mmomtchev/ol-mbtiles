@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
@@ -31,7 +32,10 @@ module.exports = (env, argv) => ({
     new HtmlWebpackPlugin({
       template: 'examples/index.html'
     }),
-    new PreloadWebpackPlugin()
+    new PreloadWebpackPlugin(),
+    new webpack.DefinePlugin({
+      OL_MBTILES_DEBUG: JSON.stringify(!!process.env.OL_MBTILES_DEBUG)
+    }),
   ],
   devtool: argv.mode === 'production' ? 'source-map' : 'inline-source-map',
   devServer: {
