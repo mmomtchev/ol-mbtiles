@@ -1,4 +1,4 @@
-## 2.0.2
+## 2.0.2 2023-04-04
 
 - Allow explicit selection of the SQLite HTTP backend
 - Correct the TypeScript return type of `importMBTiles`
