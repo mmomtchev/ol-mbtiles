@@ -89,6 +89,11 @@ export interface SQLOptions {
    * Memory to use for SQLite cache in KB, @default 4096
    */
   sqlCacheSize?: number;
+
+  /**
+   * Use a specific backend type, @default 'shared'
+   */
+  backendType?: VFSHTTP.Options['backendType'];
 }
 
 export type MBTilesOptions = MBTilesVectorOptions | MBTilesRasterOptions;
@@ -105,6 +110,7 @@ export function httpPoolOptions(options?: SQLOptions) {
   return {
     workers: options?.sqlWorkers ?? 4,
     httpOptions: {
+      backendType: options?.backendType,
       maxPageSize: options?.maxSqlPageSize ?? 4096,
       cacheSize: options?.sqlCacheSize ?? 4096
     } as VFSHTTP.Options,

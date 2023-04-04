@@ -1,3 +1,7 @@
+## 2.0.2
+
+- Allow explicit selection of the SQLite HTTP backend
+
 ## 2.0.1 2023-04-03
 
 - Upgrade to the latest [`sqlite-wasm-http`](https://github.com/mmomtchev/sqlite-wasm-http)
