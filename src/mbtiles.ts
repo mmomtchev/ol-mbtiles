@@ -126,10 +126,10 @@ export function httpPoolOptions(options?: SQLOptions) {
  * @returns {(MBTilesRasterOptions | MBTilesVectorOptions)}
  */
 export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Promise<T & SQLOptions> {
-  const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool(httpPoolOptions(opt))
-    .then((pool) => pool.open(opt.url).then(() => pool));
+  const pool: Promise<SQLiteHTTPPool> = createSQLiteHTTPPool(httpPoolOptions(opt));
 
   return pool
+    .then((pool) => pool.open(opt.url).then(() => pool))
     .then((p) => p.exec('SELECT name,value FROM metadata'))
     .then((r) => {
       if (r && r.length) {
@@ -144,7 +144,7 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       throw new Error('Could not load metadata');
     })
     .then((md) => {
-      const opts = {...opt} as T & SQLOptions;
+      const opts = { ...opt } as T & SQLOptions;
 
       const format = (md['format'] as string)?.toLowerCase?.();
       if (!formats[format])
@@ -179,7 +179,7 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
         });
       } else {
         const vectorOpts = opts as MBTilesVectorOptions;
-        // Alas VectorTileSource in Openlayers does not support
+        // Alas VectorTileSource in OpenLayers does not support
         // constraining the extent while keeping the origin
         vectorOpts.extent = projExtent;
       }
@@ -187,5 +187,8 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
       opts.url = opt.url;
 
       return opts;
-    });
+    })
+    .catch((e) =>
+      pool.then((p) => p.close()).then(() => Promise.reject(e))
+    );
 }

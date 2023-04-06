@@ -82,4 +82,18 @@ describe('importMBTiles', () => {
         done(e);
       });
   });
+
+  it('doesn\'t break without a shovel', (done) => {
+    importMBTiles<MBTilesVectorOptions>({
+      url: 'http://black.hole',
+      sqlWorkers: 1
+    })
+      .then(() => {
+        done('entered the event horizon');
+      })
+      .catch((e) => {
+        assert.equal(e.result.message, 'sqlite3 result code 14: unable to open database file');
+        done();
+      });
+  });
 });
