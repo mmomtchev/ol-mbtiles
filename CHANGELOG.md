@@ -1,3 +1,7 @@
+## 2.0.3
+
+ - Fix [#5](https://github.com/mmomtchev/ol-mbtiles/issues/5), do not leak a pool when opening an invalid url
+
 ## 2.0.2 2023-04-04
 
 - Allow explicit selection of the SQLite HTTP backend
