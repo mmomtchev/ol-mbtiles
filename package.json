@@ -86,7 +86,7 @@
     "web-worker": "github:mmomtchev/web-worker#workerglobalscope",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.15.1"
   },
   "engines": {
     "node": ">=18.0.0"
