@@ -85,7 +85,7 @@
     "typescript": "^4.9.5",
     "web-worker": "github:mmomtchev/web-worker#workerglobalscope",
     "webpack": "^5.88.2",
-    "webpack-cli": "^5.0.1",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },
   "engines": {
