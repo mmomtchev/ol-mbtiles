@@ -81,7 +81,7 @@
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "tsconfig-paths-webpack-plugin": "^4.0.0",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^4.9.5",
     "web-worker": "github:mmomtchev/web-worker#workerglobalscope",
     "webpack": "^5.88.2",
