@@ -48,7 +48,7 @@
     "ol": ">=7.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.4",
+    "@rollup/plugin-typescript": "^11.1.5",
     "@types/chai": "^4.3.9",
     "@types/chai-spies": "^1.0.5",
     "@types/geojson": "^7946.0.12",
