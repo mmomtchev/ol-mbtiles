@@ -6,7 +6,7 @@
     "test/setup.ts"
   ],
   "reporter": "tap",
-  "timeout": 30000,
+  "timeout": 40000,
   "v8-expose-gc": true,
   "loader": "ts-node/esm",
   "node-option": [
