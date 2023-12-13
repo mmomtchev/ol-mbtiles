@@ -52,7 +52,7 @@
     "@types/chai": "^4.3.11",
     "@types/chai-spies": "^1.0.6",
     "@types/geojson": "^7946.0.13",
-    "@types/jquery": "^3.5.27",
+    "@types/jquery": "^3.5.29",
     "@types/mapbox__vector-tile": "^1.3.4",
     "@types/mocha": "^10.0.4",
     "@types/pako": "^2.0.3",
