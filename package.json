@@ -65,7 +65,7 @@
     "chai-spies": "^1.1.0",
     "css-loader": "^6.8.1",
     "documentation": "^14.0.1",
-    "eslint": "^8.53.0",
+    "eslint": "^8.54.0",
     "eslint-plugin-mocha": "^10.2.0",
     "gh-pages": "^5.0.0",
     "html-loader": "^4.2.0",
