@@ -70,7 +70,7 @@
     "gh-pages": "^5.0.0",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.3",
-    "link": "^1.5.1",
+    "link": "^1.6.0",
     "mocha": "^10.2.0",
     "ol": "^7.5.2",
     "prettier": "^2.8.8",
