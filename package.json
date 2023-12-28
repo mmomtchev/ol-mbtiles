@@ -69,7 +69,7 @@
     "eslint-plugin-mocha": "^10.2.0",
     "gh-pages": "^5.0.0",
     "html-loader": "^4.2.0",
-    "html-webpack-plugin": "^5.5.3",
+    "html-webpack-plugin": "^5.5.4",
     "link": "^1.6.0",
     "mocha": "^10.2.0",
     "ol": "^7.5.2",
