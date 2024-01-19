@@ -8,6 +8,10 @@ import RenderFeature from 'ol/render/Feature.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { get as getProjection } from 'ol/proj.js';
 import { Type } from 'ol/geom/Geometry.js';
+import { VERSION as _olVERSION } from 'ol/util.js';
+
+const olVERSION = _olVERSION.split('.').map((v) => +v);
+const olVersion_RenderFeatureStrides = (olVERSION[0] > 8 || (olVERSION[0] === 8 && olVERSION[1] >= 2));
 
 declare module '@mapbox/vector-tile' {
   interface VectorTileFeature {
@@ -23,6 +27,23 @@ export interface Options {
   extent?: number;
 }
 
+export function createOLRenderFeature(
+  klass: typeof RenderFeature,
+  type: Type,
+  flatCoordinates: number[],
+  ends: number[],
+  properties: Record<string, string | number | boolean>,
+  id: string | number) {
+  // This changed in OpenLayers 8.2.0
+  return olVersion_RenderFeatureStrides ?
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    new klass(type, flatCoordinates, ends, 2, properties, id) :
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    new klass(type, flatCoordinates, ends, properties, id);
+}
+
 export class MBTilesFormat extends FeatureFormat {
   dataProjection: Projection;
   private featureClass_: typeof RenderFeature;
@@ -32,9 +53,9 @@ export class MBTilesFormat extends FeatureFormat {
   supportedMediaTypes: string[];
   extent: number;
   static MBTypes = {
-    mono: ['Unknown', 'Point', 'LineString', 'Polygon' ],
+    mono: ['Unknown', 'Point', 'LineString', 'Polygon'],
     multi: ['Unknown', 'MultiPoint', 'MultiLineString', 'Polygon']
-   } as Record<'mono' | 'multi', (Type | 'Unknown')[]>;
+  } as const;
 
   constructor(options?: Options) {
     super();
@@ -75,9 +96,8 @@ export class MBTilesFormat extends FeatureFormat {
     const flatCoordinates = [] as number[];
     const ends = [] as number[];
 
-    const type: Type | 'Unknown' = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
+    const type = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
     if (type === 'Unknown')
-    // TODO: fix in Openlayers
       return null as unknown as FeatureLike;
 
     for (let i = 0; i < points.length; i++) {
@@ -89,7 +109,7 @@ export class MBTilesFormat extends FeatureFormat {
       ends.push(flatCoordinates.length);
     }
 
-    const feature = new this.featureClass_(type, flatCoordinates, ends, properties, id);
+    const feature = createOLRenderFeature(this.featureClass_, type, flatCoordinates, ends, properties, id);
     feature.transform(options?.dataProjection);
 
     return feature;
