@@ -1,4 +1,4 @@
-export { importMBTiles, MBTilesRasterOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles'; 
-export { MBTilesVectorSource } from './mbtiles-vector-source';
-export { MBTilesRasterSource } from './mbtiles-raster-source';
-export { MBTilesFormat } from './mbtiles-format';
+export { importMBTiles, MBTilesRasterOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js';
+export { MBTilesVectorSource } from './mbtiles-vector-source.js';
+export { MBTilesRasterSource } from './mbtiles-raster-source.js';
+export { MBTilesFormat } from './mbtiles-format.js';

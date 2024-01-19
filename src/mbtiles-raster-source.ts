@@ -6,8 +6,8 @@ import ImageTile from 'ol/ImageTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 import TileState from 'ol/TileState.js';
 
-import { httpPoolOptions, MBTilesRasterOptions, SQLOptions } from './mbtiles';
-import { debug } from './debug';
+import { httpPoolOptions, MBTilesRasterOptions, SQLOptions } from './mbtiles.js';
+import { debug } from './debug.js';
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
