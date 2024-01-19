@@ -5,7 +5,7 @@ import { Options as VectorTileOptions } from 'ol/source/VectorTile.js';
 import { get as getProjection, transformExtent } from 'ol/proj.js';
 import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
-import { debug } from './debug';
+import { debug } from './debug.js';
 
 /**
  * Options for creating a MBTilesRasterSource

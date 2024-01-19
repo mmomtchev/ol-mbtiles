@@ -6,9 +6,9 @@ import { TileCoord } from 'ol/tilecoord.js';
 import Feature from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
-import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles';
-import { MBTilesFormat } from './mbtiles-format';
-import { debug } from './debug';
+import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js';
+import { MBTilesFormat } from './mbtiles-format.js';
+import { debug } from './debug.js';
 import Tile from 'ol/Tile';
 
 /**
