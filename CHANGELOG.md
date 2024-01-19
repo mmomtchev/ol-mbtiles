@@ -1,4 +1,4 @@
-## 2.1.0
+## 2.1.0 2024-01-19
 
  - Support OpenLayers 8.2.0
  - Fix [#5](https://github.com/mmomtchev/ol-mbtiles/issues/5), do not leak a pool when opening an invalid url
