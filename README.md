@@ -24,7 +24,7 @@ Both raster and vector tilesets are supported.
 npm install ol-mbtiles
 ```
 
-## Manual layer configuration (require prior knowledge of the metadata parameters):
+## Manual layer configuration (requires prior knowledge of the metadata parameters):
 
 ```js
 import Map from "ol/Map.js";
