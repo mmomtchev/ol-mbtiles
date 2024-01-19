@@ -92,8 +92,9 @@ describe('importMBTiles', () => {
         done('entered the event horizon');
       })
       .catch((e) => {
-        assert.equal(e.result.message, 'sqlite3 result code 14: unable to open database file');
+        assert.match(e.result.message, /SQLITE_CANTOPEN/);
         done();
-      });
+      })
+      .catch(done);
   });
 });
