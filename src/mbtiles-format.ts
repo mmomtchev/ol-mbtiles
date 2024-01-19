@@ -4,9 +4,10 @@ import pako from 'pako';
 
 import FeatureFormat, { ReadOptions } from 'ol/format/Feature.js';
 import Projection from 'ol/proj/Projection.js';
-import RenderFeature, { Type } from 'ol/render/Feature.js';
+import RenderFeature from 'ol/render/Feature.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { get as getProjection } from 'ol/proj.js';
+import { Type } from 'ol/geom/Geometry.js';
 import { VERSION as _olVERSION } from 'ol/util.js';
 
 const olVERSION = _olVERSION.split('.').map((v) => +v);
