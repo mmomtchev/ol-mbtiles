@@ -14,9 +14,9 @@ function setupMockSource(opt: {
   setImageSrc?: (url: string) => void,
   onLoadStart?: () => void,
   onLoadEnd?: () => void,
-  onLoadError?: () => void
+  onLoadError?: () => void;
 }) {
-  const source = new MBTilesRasterSource({ url: opt.url, sqlWorkers: 1 });
+  const source = new MBTilesRasterSource({ url: opt.url, sqlWorkers: 1, mime: 'image/jpeg' });
   const loadFn = source.getTileLoadFunction();
   const onLoadStart = chai.spy(opt.onLoadStart ?? (() => undefined));
   const onLoadEnd = chai.spy(opt.onLoadStart ?? (() => undefined));
@@ -68,8 +68,14 @@ describe('MBTilesRasterSource', () => {
         setState: () => done('Tile error'),
         setImageSrc: (url: string) => {
           assert.isString(url);
-          assert.match(url, /^blob:nodedata:[a-z0-f-]+/);   
-          done();       
+          assert.match(url, /^blob:nodedata:[a-z0-f-]+/);
+          fetch(url)
+            .then((r) => r.blob())
+            .then((r) => {
+              assert.strictEqual(r.type, 'image/jpeg');
+              done();
+            })
+            .catch(done);
         },
         onLoadError: () => done('Tile error')
       });

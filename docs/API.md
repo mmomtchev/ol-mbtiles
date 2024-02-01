@@ -9,22 +9,23 @@
     *   [maxZoom][5]
     *   [tileGrid][6]
     *   [pool][7]
-*   [MBTilesRasterSource][8]
-    *   [Parameters][9]
-*   [MBTilesVectorSource][10]
-    *   [Parameters][11]
-*   [MBTilesVectorOptions][12]
-    *   [sqlWorkers][13]
-    *   [layers][14]
-    *   [pool][15]
-*   [SQLOptions][16]
-    *   [url][17]
-    *   [sqlWorkers][18]
-    *   [maxSqlPageSize][19]
-    *   [sqlCacheSize][20]
-    *   [backendType][21]
-*   [importMBTiles][22]
-    *   [Parameters][23]
+    *   [mime][8]
+*   [MBTilesRasterSource][9]
+    *   [Parameters][10]
+*   [MBTilesVectorSource][11]
+    *   [Parameters][12]
+*   [MBTilesVectorOptions][13]
+    *   [sqlWorkers][14]
+    *   [layers][15]
+    *   [pool][16]
+*   [SQLOptions][17]
+    *   [url][18]
+    *   [sqlWorkers][19]
+    *   [maxSqlPageSize][20]
+    *   [sqlCacheSize][21]
+    *   [backendType][22]
+*   [importMBTiles][23]
+    *   [Parameters][24]
 
 ## MBTilesRasterOptions
 
@@ -36,25 +37,25 @@ Options for creating a MBTilesRasterSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][24]
+Type: [number][25]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][25]<[string][26]>
+Type: [Array][26]<[string][27]>
 
 ### minZoom
 
 Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
 
-Type: [number][24]
+Type: [number][25]
 
 ### maxZoom
 
 Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
 
-Type: [number][24]
+Type: [number][25]
 
 ### tileGrid
 
@@ -66,7 +67,13 @@ Type: TileGrid
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][27]\<SQLiteHTTPPool>
+Type: [Promise][28]\<SQLiteHTTPPool>
+
+### mime
+
+Optional MIME type for loaded tiles (see [https://github.com/mmomtchev/ol-mbtiles/issues/68][29])
+
+Type: [string][27]
 
 ## MBTilesRasterSource
 
@@ -82,7 +89,7 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][28]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][30]
 
 ### Parameters
 
@@ -102,11 +109,11 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][28]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][30]
 
 ### Parameters
 
-*   `options` **[MBTilesVectorOptions][12]** options
+*   `options` **[MBTilesVectorOptions][13]** options
 
 ## MBTilesVectorOptions
 
@@ -118,19 +125,19 @@ Options for creating a MBTilesVectorSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][24]
+Type: [number][25]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][25]<[string][26]>
+Type: [Array][26]<[string][27]>
 
 ### pool
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][27]\<SQLiteHTTPPool>
+Type: [Promise][28]\<SQLiteHTTPPool>
 
 ## SQLOptions
 
@@ -140,25 +147,25 @@ Shared options for all MBTiles
 
 URL of the remote MBTiles source
 
-Type: [string][26]
+Type: [string][27]
 
 ### sqlWorkers
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][24]
+Type: [number][25]
 
 ### maxSqlPageSize
 
 Maximum expected page size in bytes for SQLite3 files, @default 4096
 
-Type: [number][24]
+Type: [number][25]
 
 ### sqlCacheSize
 
 Memory to use for SQLite cache in KB, @default 4096
 
-Type: [number][24]
+Type: [number][25]
 
 ### backendType
 
@@ -175,7 +182,7 @@ compatible with the source constructors.
 
 *   `opt` **any**&#x20;
 
-Returns **([MBTilesRasterOptions][1] | [MBTilesVectorOptions][12])**&#x20;
+Returns **([MBTilesRasterOptions][1] | [MBTilesVectorOptions][13])**&#x20;
 
 [1]: #mbtilesrasteroptions
 
@@ -191,44 +198,48 @@ Returns **([MBTilesRasterOptions][1] | [MBTilesVectorOptions][12])**&#x20;
 
 [7]: #pool
 
-[8]: #mbtilesrastersource
+[8]: #mime
 
-[9]: #parameters
+[9]: #mbtilesrastersource
 
-[10]: #mbtilesvectorsource
+[10]: #parameters
 
-[11]: #parameters-1
+[11]: #mbtilesvectorsource
 
-[12]: #mbtilesvectoroptions
+[12]: #parameters-1
 
-[13]: #sqlworkers-1
+[13]: #mbtilesvectoroptions
 
-[14]: #layers-1
+[14]: #sqlworkers-1
 
-[15]: #pool-1
+[15]: #layers-1
 
-[16]: #sqloptions
+[16]: #pool-1
 
-[17]: #url
+[17]: #sqloptions
 
-[18]: #sqlworkers-2
+[18]: #url
 
-[19]: #maxsqlpagesize
+[19]: #sqlworkers-2
 
-[20]: #sqlcachesize
+[20]: #maxsqlpagesize
 
-[21]: #backendtype
+[21]: #sqlcachesize
 
-[22]: #importmbtiles
+[22]: #backendtype
 
-[23]: #parameters-2
+[23]: #importmbtiles
 
-[24]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[24]: #parameters-2
 
-[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[28]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
+[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[29]: https://github.com/mmomtchev/ol-mbtiles/issues/68
+
+[30]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
