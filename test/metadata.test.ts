@@ -39,6 +39,7 @@ describe('importMBTiles', () => {
             -2366876.107971946
           ]);
           assert.deepStrictEqual(md.tileGrid?.getOrigin(0), [-20037508.342789244, 20037508.342789244]);
+          assert.strictEqual(md.mime, 'image/jpeg');
 
           done();
         } finally {

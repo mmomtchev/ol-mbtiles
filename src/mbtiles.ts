@@ -42,6 +42,11 @@ export interface MBTilesRasterOptions extends ImageTileOptions {
    * Optional already open SQLiteHTTP pool (mutually exclusive with url)
    */
   pool?: Promise<SQLiteHTTPPool>;
+
+  /**
+   * Optional MIME type for loaded tiles (see https://github.com/mmomtchev/ol-mbtiles/issues/68)
+   */
+  mime?: string;
 }
 
 /**
@@ -98,12 +103,12 @@ export interface SQLOptions {
 
 export type MBTilesOptions = MBTilesVectorOptions | MBTilesRasterOptions;
 
-const formats: Record<string, 'raster' | 'vector'> = {
-  'jpg': 'raster',
-  'png': 'raster',
-  'webp': 'raster',
-  'pbf': 'vector',
-  'mvt': 'vector'
+const formats: Record<string, { type: 'raster' | 'vector', mime?: string; }> = {
+  'jpg': { type: 'raster', mime: 'image/jpeg' },
+  'png': { type: 'raster', mime: 'image/png' },
+  'webp': { type: 'raster', mime: 'image/webp' },
+  'pbf': { type: 'vector' },
+  'mvt': { type: 'vector' },
 };
 
 export function httpPoolOptions(options?: SQLOptions) {
@@ -163,13 +168,16 @@ export function importMBTiles<T extends MBTilesOptions>(opt: SQLOptions & T): Pr
         transformExtent(bounds.split(',').map((r) => +r), 'EPSG:4326', opts.projection) :
         projExtent;
 
-      if (formats[format] === 'raster') {
+      if (formats[format].type === 'raster') {
         if (opts.maxZoom === undefined || opts.minZoom === undefined || projExtent === undefined)
           throw new Error('Cannot determine tilegrid, need minZoom, maxZoom');
         const baseResolution = getWidth(projExtent) / 256;
         const resolutions = [baseResolution];
         for (let z = 1; z <= opts.maxZoom; z++)
           resolutions.push(resolutions[resolutions.length - 1] / 2);
+
+        const mime = formats[format].mime ?? format;
+        (opts as MBTilesRasterOptions).mime = mime;
 
         opts.tileGrid = new TileGrid({
           origin: [projExtent[0], projExtent[2]],

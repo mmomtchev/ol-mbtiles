@@ -1,3 +1,7 @@
+### 2.1.1
+
+ - Fix [#68](https://github.com/mmomtchev/ol-mbtiles/issues/68), create the tile image blob with a MIME type
+
 ## 2.1.0 2024-01-19
 
  - Support OpenLayers 8.2.0

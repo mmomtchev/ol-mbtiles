@@ -24,6 +24,7 @@ import { debug } from './debug.js';
  */
 export class MBTilesRasterSource extends ImageTileSource {
   private pool: Promise<SQLiteHTTPPool>;
+  private mime?: string;
 
   /**
    * @param {MBTilesRasterOptions} options options
@@ -43,6 +44,7 @@ export class MBTilesRasterSource extends ImageTileSource {
 
     this.pool = options.pool ?? createSQLiteHTTPPool(httpPoolOptions(options))
       .then((pool) => pool.open(options.url).then(() => pool));
+    this.mime = options.mime;
   }
 
   // TODO fix the tile type in Openlayers
@@ -62,7 +64,7 @@ export class MBTilesRasterSource extends ImageTileSource {
       .then((r) => {
         if (r && r[0]) {
           if (r[0].row[0] instanceof Uint8Array) {
-            const blob = new Blob([r[0].row[0] as Uint8Array]);
+            const blob = new Blob([r[0].row[0] as Uint8Array], { type: this.mime });
             const imageUrl = URL.createObjectURL(blob);
             image.src = imageUrl;
             return;
