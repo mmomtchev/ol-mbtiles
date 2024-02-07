@@ -76,7 +76,7 @@
     "prettier": "^2.8.8",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.29.0",
-    "rollup": "^3.29.4",
+    "rollup": "^4.9.6",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
