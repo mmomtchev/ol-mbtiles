@@ -3,19 +3,22 @@ import { createSQLiteHTTPPool, SQLiteHTTPPool, VFSHTTP } from 'sqlite-wasm-http'
 import { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import { Options as OLVectorTileOptions } from 'ol/source/VectorTile.js';
 import { get as getProjection, transformExtent } from 'ol/proj.js';
-import FeatureFormat from 'ol/format/Feature.js';
 import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { debug } from './debug.js';
 
-type VectorTileOptions = FeatureLike extends ReturnType<FeatureFormat['readFeatures']>[0] ?
+// This is a very ugly check if OLVectorTileOptions is a generic type
+// (this is something that changed in OpenLayers 9.0)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+type VectorTileOptions = unknown extends OLVectorTileOptions<FeatureLike> ?
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  OLVectorTileOptions<FeatureLike> :
+  OLVectorTileOptions :
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  OLVectorTileOptions;
+  OLVectorTileOptions<FeatureLike>;
 
 /**
  * Options for creating a MBTilesRasterSource
