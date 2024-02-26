@@ -113,7 +113,7 @@ describe('MBTilesVectorSource', () => {
         }
       });
 
-      // TODO Fix FeatureLoader type in Openlayers
+      // TODO This is not needed anymore with recent OL versions
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       loader.call(source as any, extent, resolution, getProjection(projection) as Projection,
         () => undefined, () => undefined);

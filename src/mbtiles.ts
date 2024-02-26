@@ -36,12 +36,16 @@ export interface MBTilesRasterOptions extends ImageTileOptions {
   tileLoadFunction?: never;
 
   /**
-   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection.
+   * This refers to the available zoom levels of the tiled data and it is different from the OpenLayers minZoom
+   * parameter that applies to the layer.
    */
   minZoom?: number;
 
   /**
-   * Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+   * Alternative method of specifying maxZoom, mutually exclusive with tileGrid, requires explicit projection
+   * This refers to the available zoom levels of the tiled data and it is different from the OpenLayers maxZoom
+   * parameter that applies to the layer.
    */
   maxZoom?: number;
 
@@ -73,6 +77,20 @@ export interface MBTilesVectorOptions extends VectorTileOptions {
    * List of layer names to selectively include, @default everything
    */
   layers?: string[];
+
+  /**
+   * Minimum available zoom level.
+   * This refers to the available zoom levels of the tiled data and it is different from the OpenLayers minZoom
+   * parameter that applies to the layer.
+   */
+  minZoom?: number;
+
+  /**
+   * Maximum available zoom level.
+   * This refers to the available zoom levels of the tiled data and it is different from the OpenLayers maxZoom
+   * parameter that applies to the layer.
+   */
+  maxZoom?: number;
 
   /**
    * Optional already open SQLiteHTTP pool (mutually exclusive with url)
