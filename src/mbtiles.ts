@@ -6,13 +6,10 @@ import { get as getProjection, transformExtent } from 'ol/proj.js';
 import FeatureFormat from 'ol/format/Feature.js';
 import { getWidth } from 'ol/extent.js';
 import TileGrid from 'ol/tilegrid/TileGrid.js';
-import { Feature } from 'ol';
-import { Geometry } from 'ol/geom.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { debug } from './debug.js';
 
-
-type VectorTileOptions = Feature<Geometry> extends ReturnType<FeatureFormat['readFeatures']>[0] ?
+type VectorTileOptions = FeatureLike extends ReturnType<FeatureFormat['readFeatures']>[0] ?
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   OLVectorTileOptions<FeatureLike> :
