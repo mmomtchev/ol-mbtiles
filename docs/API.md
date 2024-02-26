@@ -17,15 +17,17 @@
 *   [MBTilesVectorOptions][13]
     *   [sqlWorkers][14]
     *   [layers][15]
-    *   [pool][16]
-*   [SQLOptions][17]
-    *   [url][18]
-    *   [sqlWorkers][19]
-    *   [maxSqlPageSize][20]
-    *   [sqlCacheSize][21]
-    *   [backendType][22]
-*   [importMBTiles][23]
-    *   [Parameters][24]
+    *   [minZoom][16]
+    *   [maxZoom][17]
+    *   [pool][18]
+*   [SQLOptions][19]
+    *   [url][20]
+    *   [sqlWorkers][21]
+    *   [maxSqlPageSize][22]
+    *   [sqlCacheSize][23]
+    *   [backendType][24]
+*   [importMBTiles][25]
+    *   [Parameters][26]
 
 ## MBTilesRasterSource
 
@@ -41,7 +43,7 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][25]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][27]
 
 ### Parameters
 
@@ -57,25 +59,29 @@ Options for creating a MBTilesRasterSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][26]
+Type: [number][28]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][27]<[string][28]>
+Type: [Array][29]<[string][30]>
 
 ### minZoom
 
-Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection.
+This refers to the available zoom levels of the tiled data and it is different from the OpenLayers minZoom
+parameter that applies to the layer.
 
-Type: [number][26]
+Type: [number][28]
 
 ### maxZoom
 
-Alternative method of specifying minZoom, mutually exclusive with tileGrid, requires explicit projection
+Alternative method of specifying maxZoom, mutually exclusive with tileGrid, requires explicit projection
+This refers to the available zoom levels of the tiled data and it is different from the OpenLayers maxZoom
+parameter that applies to the layer.
 
-Type: [number][26]
+Type: [number][28]
 
 ### tileGrid
 
@@ -87,13 +93,13 @@ Type: TileGrid
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][29]\<SQLiteHTTPPool>
+Type: [Promise][31]\<SQLiteHTTPPool>
 
 ### mime
 
-Optional MIME type for loaded tiles (see [https://github.com/mmomtchev/ol-mbtiles/issues/68][30])
+Optional MIME type for loaded tiles (see [https://github.com/mmomtchev/ol-mbtiles/issues/68][32])
 
-Type: [string][28]
+Type: [string][30]
 
 ## MBTilesVectorSource
 
@@ -109,7 +115,7 @@ automatically garbage-collect unless the dispose() method
 is invoked.
 If you need to dispose a map that can potentially contain
 MBTilesSource objects, check loadExample() in
-[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][25]
+[https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15][27]
 
 ### Parameters
 
@@ -125,19 +131,35 @@ Options for creating a MBTilesVectorSource
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][26]
+Type: [number][28]
 
 ### layers
 
 List of layer names to selectively include, @default everything
 
-Type: [Array][27]<[string][28]>
+Type: [Array][29]<[string][30]>
+
+### minZoom
+
+Minimum available zoom level.
+This refers to the available zoom levels of the tiled data and it is different from the OpenLayers minZoom
+parameter that applies to the layer.
+
+Type: [number][28]
+
+### maxZoom
+
+Maximum available zoom level.
+This refers to the available zoom levels of the tiled data and it is different from the OpenLayers maxZoom
+parameter that applies to the layer.
+
+Type: [number][28]
 
 ### pool
 
 Optional already open SQLiteHTTP pool (mutually exclusive with url)
 
-Type: [Promise][29]\<SQLiteHTTPPool>
+Type: [Promise][31]\<SQLiteHTTPPool>
 
 ## SQLOptions
 
@@ -147,25 +169,25 @@ Shared options for all MBTiles
 
 URL of the remote MBTiles source
 
-Type: [string][28]
+Type: [string][30]
 
 ### sqlWorkers
 
 Number of parallel workers to use for retrieving tiles, @default 4
 
-Type: [number][26]
+Type: [number][28]
 
 ### maxSqlPageSize
 
 Maximum expected page size in bytes for SQLite3 files, @default 4096
 
-Type: [number][26]
+Type: [number][28]
 
 ### sqlCacheSize
 
 Memory to use for SQLite cache in KB, @default 4096
 
-Type: [number][26]
+Type: [number][28]
 
 ### backendType
 
@@ -214,32 +236,36 @@ Returns **([MBTilesRasterOptions][3] | [MBTilesVectorOptions][13])**&#x20;
 
 [15]: #layers-1
 
-[16]: #pool-1
+[16]: #minzoom-1
 
-[17]: #sqloptions
+[17]: #maxzoom-1
 
-[18]: #url
+[18]: #pool-1
 
-[19]: #sqlworkers-2
+[19]: #sqloptions
 
-[20]: #maxsqlpagesize
+[20]: #url
 
-[21]: #sqlcachesize
+[21]: #sqlworkers-2
 
-[22]: #backendtype
+[22]: #maxsqlpagesize
 
-[23]: #importmbtiles
+[23]: #sqlcachesize
 
-[24]: #parameters-2
+[24]: #backendtype
 
-[25]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
+[25]: #importmbtiles
 
-[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[26]: #parameters-2
 
-[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[27]: https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
 
-[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[30]: https://github.com/mmomtchev/ol-mbtiles/issues/68
+[30]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[31]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[32]: https://github.com/mmomtchev/ol-mbtiles/issues/68
