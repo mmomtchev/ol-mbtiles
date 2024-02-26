@@ -1,6 +1,5 @@
 import { createSQLiteHTTPPool, SQLiteHTTPPool, VFSHTTP } from 'sqlite-wasm-http';
 
-import { Map } from 'ol';
 import { Options as ImageTileOptions } from 'ol/source/TileImage.js';
 import { Options as OLVectorTileOptions } from 'ol/source/VectorTile.js';
 import { get as getProjection, transformExtent } from 'ol/proj.js';
@@ -9,14 +8,16 @@ import TileGrid from 'ol/tilegrid/TileGrid.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { debug } from './debug.js';
 
-// Detect OpenLayers 9.0
-type VectorTileOptions = null extends ReturnType<Map['getOverlayById']> ?
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  OLVectorTileOptions<FeatureLike> :
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  OLVectorTileOptions;
+// Check if the type is any
+// https://stackoverflow.com/questions/55541275/typescript-check-for-the-any-type
+type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
+
+
+// Detect if OLVectorTiles is a generic type
+// (works because with @ts-ignore invalid types resolve to any)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+type VectorTileOptions = IfAny<OLVectorTileOptions<FeatureLike>, OLVectorTileOptions, OLVectorTileOptions<FeatureLike>>;
 
 /**
  * Options for creating a MBTilesRasterSource
