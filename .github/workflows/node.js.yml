@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        ol-version: [7.0.0, 7.1.0, 7.2.0, 7.2.2, 7.3.0, 8.0.0, 8.1.0, 8.2.0, 9.0.0]
+        ol-version: [7.0.0, 7.1.0, 7.2.0, 7.2.2, 7.3.0, 8.0.0, 8.1.0, 8.2.0, 9.0.0, 9.1.0]
 
     steps:
     - uses: actions/checkout@v4
