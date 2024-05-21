@@ -17,7 +17,7 @@ type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type VectorTileSourceType = IfAny<VectorTileSource<Feature>, new (...args: any[]) => VectorTileSource, new (...args: any[]) => VectorTileSource<Feature>>;
+type VectorTileSourceType = IfAny<VectorTileSource<Feature>, typeof VectorTileSource, typeof VectorTileSource<Feature>>;
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -42,7 +42,7 @@ export class MBTilesVectorSource extends (VectorTileSource as VectorTileSourceTy
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 
-      super({
+    super({
       ...options,
       url: undefined,
       format: new MBTilesFormat({
