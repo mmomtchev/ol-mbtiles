@@ -10,13 +10,14 @@ import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js'
 import { MBTilesFormat } from './mbtiles-format.js';
 import { debug } from './debug.js';
 import Tile from 'ol/Tile';
-import { VERSION as _olVERSION } from 'ol/util.js';
 
-const olVERSION = _olVERSION.split('.').map((v) => +v);
-const olVersion_VectorTileSourceDefaultIsRender = (olVERSION[0] > 9 || (olVERSION[0] === 9 && olVERSION[1] >= 2));
+type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
+// Detect if VectorTileSource is a generic type
+// (works because with @ts-ignore invalid types resolve to any)
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const OLVectorTileSource = olVersion_VectorTileSourceDefaultIsRender ? VectorTileSource<Feature> : VectorTileSource;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type VectorTileSourceType = IfAny<VectorTileSource<Feature>, new (...args: any[]) => VectorTileSource, new (...args: any[]) => VectorTileSource<Feature>>;
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -31,7 +32,7 @@ const OLVectorTileSource = olVersion_VectorTileSourceDefaultIsRender ? VectorTil
  * MBTilesSource objects, check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
  */
-export class MBTilesVectorSource extends OLVectorTileSource {
+export class MBTilesVectorSource extends (VectorTileSource as VectorTileSourceType) {
   private pool: Promise<SQLiteHTTPPool>;
 
   /**
