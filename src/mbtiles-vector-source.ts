@@ -10,6 +10,13 @@ import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js'
 import { MBTilesFormat } from './mbtiles-format.js';
 import { debug } from './debug.js';
 import Tile from 'ol/Tile';
+import { VERSION as _olVERSION } from 'ol/util.js';
+
+const olVERSION = _olVERSION.split('.').map((v) => +v);
+const olVersion_VectorTileSourceDefaultIsRender = (olVERSION[0] > 9 || (olVERSION[0] === 9 && olVERSION[1] >= 2));
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const OLVectorTileSource = olVersion_VectorTileSourceDefaultIsRender ? VectorTileSource<Feature> : VectorTileSource;
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -24,7 +31,7 @@ import Tile from 'ol/Tile';
  * MBTilesSource objects, check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
  */
-export class MBTilesVectorSource extends VectorTileSource {
+export class MBTilesVectorSource extends OLVectorTileSource {
   private pool: Promise<SQLiteHTTPPool>;
 
   /**
