@@ -103,7 +103,7 @@ Type: [string][30]
 
 ## MBTilesVectorSource
 
-**Extends VectorTileSource**
+**Extends VectorTileSource as VectorTileSourceType**
 
 A tile source in a remote .mbtiles file accessible by HTTP
 
