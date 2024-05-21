@@ -11,6 +11,14 @@ import { MBTilesFormat } from './mbtiles-format.js';
 import { debug } from './debug.js';
 import Tile from 'ol/Tile';
 
+type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
+// Detect if VectorTileSource is a generic type
+// (works because with @ts-ignore invalid types resolve to any)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type VectorTileSourceType = IfAny<VectorTileSource<Feature>, typeof VectorTileSource, typeof VectorTileSource<Feature>>;
+
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
  * 
@@ -24,7 +32,7 @@ import Tile from 'ol/Tile';
  * MBTilesSource objects, check loadExample() in
  * https://github.com/mmomtchev/ol-mbtiles/blob/main/examples/index.ts#L15
  */
-export class MBTilesVectorSource extends VectorTileSource {
+export class MBTilesVectorSource extends (VectorTileSource as VectorTileSourceType) {
   private pool: Promise<SQLiteHTTPPool>;
 
   /**
@@ -34,7 +42,7 @@ export class MBTilesVectorSource extends VectorTileSource {
     if (options.url === undefined && options.pool === undefined)
       throw new Error('Must specify url');
 
-      super({
+    super({
       ...options,
       url: undefined,
       format: new MBTilesFormat({
