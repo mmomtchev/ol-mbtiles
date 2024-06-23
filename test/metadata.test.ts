@@ -1,4 +1,4 @@
-import { importMBTiles, MBTilesRasterOptions, MBTilesVectorOptions } from '../src/index.js';
+import { importMBTiles, MBTilesRasterOptions, MBTilesVectorOptions } from '../dist/index.js';
 
 import TileGrid from 'ol/tilegrid/TileGrid.js';
 
