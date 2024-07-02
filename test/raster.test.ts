@@ -1,4 +1,4 @@
-import { MBTilesRasterSource } from '../src/index.js';
+import { MBTilesRasterSource } from '../dist/index.js';
 import { Tile } from 'ol';
 
 import chai from 'chai';
