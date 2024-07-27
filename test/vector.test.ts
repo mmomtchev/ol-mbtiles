@@ -1,5 +1,5 @@
 import { MBTilesFormat, MBTilesVectorSource } from '../src/index.js';
-import { Feature, VectorTile } from 'ol';
+import { VectorTile } from 'ol';
 import { get as getProjection, Projection } from 'ol/proj.js';
 import TileState from 'ol/TileState.js';
 import { FeatureLoader } from 'ol/featureloader.js';
@@ -23,12 +23,12 @@ describe('MBTilesVectorSource', () => {
       sqlWorkers: 1
     });
     const loadFn = source.getTileLoadFunction();
-    const tile = new VectorTile(tileCoord, TileState.EMPTY, '', new MBTilesFormat(), loadFn);
+    const tile = new VectorTile(tileCoord, TileState.EMPTY, '', new MBTilesFormat, loadFn);
 
-    tile.setLoader = chai.spy((loader: FeatureLoader) => {
+    tile.setLoader = chai.spy((loader: FeatureLoader<RenderFeature>) => {
       expect(loader).is.a('function');
 
-      tile.setFeatures = chai.spy((features: Feature[]) => {
+      tile.setFeatures = chai.spy((features: RenderFeature[]) => {
         try {
           assert.lengthOf(features, 278);
           const rdb = features.find((f) =>
@@ -79,10 +79,10 @@ describe('MBTilesVectorSource', () => {
     const loadFn = source.getTileLoadFunction();
     const tile = new VectorTile(tileCoord, TileState.EMPTY, '', new MBTilesFormat({ layers }), loadFn);
 
-    tile.setLoader = chai.spy((loader: FeatureLoader) => {
+    tile.setLoader = chai.spy((loader: FeatureLoader<RenderFeature>) => {
       expect(loader).is.a('function');
 
-      tile.setFeatures = chai.spy((features: Feature[]) => {
+      tile.setFeatures = chai.spy((features: RenderFeature[]) => {
         try {
           assert.lengthOf(features, 71);
           const rdb = features.find((f) =>
@@ -135,7 +135,7 @@ describe('MBTilesVectorSource', () => {
     const loadFn = source.getTileLoadFunction();
     const tile = new VectorTile([1, 100, 100], TileState.EMPTY, '', new MBTilesFormat({ layers }), loadFn);
 
-    tile.setLoader = chai.spy((loader: FeatureLoader) => {
+    tile.setLoader = chai.spy((loader: FeatureLoader<RenderFeature>) => {
       expect(loader).is.a('function');
 
       tile.setFeatures = chai.spy();

@@ -44,7 +44,7 @@ export function createOLRenderFeature(
     new klass(type, flatCoordinates, ends, properties, id);
 }
 
-export class MBTilesFormat<F extends FeatureLike = FeatureLike> extends FeatureFormat<F> {
+export class MBTilesFormat<F extends FeatureLike = RenderFeature> extends FeatureFormat<F> {
   dataProjection: Projection;
   private featureClass_: typeof RenderFeature;
   private geometryName_: string;
