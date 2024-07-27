@@ -3,7 +3,7 @@ import { createSQLiteHTTPPool, SQLiteHTTPPool } from 'sqlite-wasm-http';
 import VectorTileSource from 'ol/source/VectorTile.js';
 import VectorTile from 'ol/VectorTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
-import Feature from 'ol/Feature.js';
+import Feature, { FeatureLike } from 'ol/Feature.js';
 import { Geometry } from 'ol/geom.js';
 
 import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js';
@@ -17,7 +17,7 @@ type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type VectorTileSourceType = IfAny<VectorTileSource<Feature>, typeof VectorTileSource, typeof VectorTileSource<Feature>>;
+type VectorTileSourceType = IfAny<VectorTileSource<FeatureLike>, typeof VectorTileSource, typeof VectorTileSource<FeatureLike>>;
 
 /**
  * A tile source in a remote .mbtiles file accessible by HTTP
@@ -59,8 +59,7 @@ export class MBTilesVectorSource extends (VectorTileSource as VectorTileSourceTy
   }
 
   private tileLoader(_tile: Tile, _url: string) {
-    // TODO fix the type in Openlayers after the war
-    const tile = _tile as VectorTile;
+    const tile = _tile as VectorTile<FeatureLike>;
     debug('loading tile', [tile.tileCoord[0], tile.tileCoord[1], tile.tileCoord[2]]);
     tile.setLoader((extent, resolution, projection) => {
       this.pool

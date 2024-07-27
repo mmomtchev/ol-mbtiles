@@ -44,7 +44,7 @@ export function createOLRenderFeature(
     new klass(type, flatCoordinates, ends, properties, id);
 }
 
-export class MBTilesFormat extends FeatureFormat {
+export class MBTilesFormat<F extends FeatureLike = FeatureLike> extends FeatureFormat<F> {
   dataProjection: Projection;
   private featureClass_: typeof RenderFeature;
   private geometryName_: string;
@@ -82,7 +82,7 @@ export class MBTilesFormat extends FeatureFormat {
     ];
   }
 
-  readFeature(source: VectorTileFeature, options?: ReadOptions): FeatureLike {
+  readFeature(source: VectorTileFeature, options?: ReadOptions): F {
     const properties = source.properties;
 
     let id: string | number;
@@ -98,7 +98,7 @@ export class MBTilesFormat extends FeatureFormat {
 
     const type = MBTilesFormat.MBTypes[points.length > 1 ? 'multi' : 'mono'][source.type];
     if (type === 'Unknown')
-      return null as unknown as FeatureLike;
+      return null as unknown as F;
 
     for (let i = 0; i < points.length; i++) {
       if (points[i].length == 0)
@@ -109,16 +109,17 @@ export class MBTilesFormat extends FeatureFormat {
       ends.push(flatCoordinates.length);
     }
 
-    const feature = createOLRenderFeature(this.featureClass_, type, flatCoordinates, ends, properties, id);
-    feature.transform(options?.dataProjection);
+    const feature = createOLRenderFeature(this.featureClass_, type, flatCoordinates, ends, properties, id) as F;
+    if (options?.dataProjection && 'transform' in feature)
+      feature.transform(options?.dataProjection);
 
     return feature;
   }
 
-  readFeatures(source: ArrayBuffer, options?: ReadOptions): FeatureLike[] {
+  readFeatures(source: ArrayBuffer, options?: ReadOptions): F[] {
     const layers = this.layers_;
 
-    const features: FeatureLike[] = [];
+    const features: F[] = [];
     const tile = new VectorTile(new Protobuf(pako.ungzip(source)));
     options = this.adaptOptions(options);
     const dataProjection = getProjection(options?.dataProjection);
