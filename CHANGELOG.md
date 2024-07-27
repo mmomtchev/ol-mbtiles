@@ -2,6 +2,7 @@
 
  - Support OpenLayers 10
  - Drop all previous versions
+ - Switch to using `RenderFeature` by default (full-fledged `Feature` is still available when explicitly configured)
 
 ## 2.4.0 2024-05-21
 
