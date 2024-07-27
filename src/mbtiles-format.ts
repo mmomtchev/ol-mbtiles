@@ -27,23 +27,6 @@ export interface Options {
   extent?: number;
 }
 
-export function createOLRenderFeature(
-  klass: typeof RenderFeature,
-  type: Type,
-  flatCoordinates: number[],
-  ends: number[],
-  properties: Record<string, string | number | boolean>,
-  id: string | number) {
-  // This changed in OpenLayers 8.2.0
-  return olVersion_RenderFeatureStrides ?
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new klass(type, flatCoordinates, ends, 2, properties, id) :
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    new klass(type, flatCoordinates, ends, properties, id);
-}
-
 export class MBTilesFormat<F extends FeatureLike = RenderFeature> extends FeatureFormat<F> {
   dataProjection: Projection;
   private featureClass_: typeof RenderFeature;
@@ -109,7 +92,7 @@ export class MBTilesFormat<F extends FeatureLike = RenderFeature> extends Featur
       ends.push(flatCoordinates.length);
     }
 
-    const feature = createOLRenderFeature(this.featureClass_, type, flatCoordinates, ends, properties, id) as F;
+    const feature = new this.featureClass_(type, flatCoordinates, ends, 2, properties, id) as F;
     if (options?.dataProjection && 'transform' in feature)
       feature.transform(options?.dataProjection);
 
