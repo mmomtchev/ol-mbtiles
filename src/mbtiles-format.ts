@@ -7,11 +7,6 @@ import Projection from 'ol/proj/Projection.js';
 import RenderFeature from 'ol/render/Feature.js';
 import { FeatureLike } from 'ol/Feature.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Type } from 'ol/geom/Geometry.js';
-import { VERSION as _olVERSION } from 'ol/util.js';
-
-const olVERSION = _olVERSION.split('.').map((v) => +v);
-const olVersion_RenderFeatureStrides = (olVERSION[0] > 8 || (olVERSION[0] === 8 && olVERSION[1] >= 2));
 
 declare module '@mapbox/vector-tile' {
   interface VectorTileFeature {
