@@ -45,7 +45,7 @@
     "sqlite-wasm-http": "^1.2.0"
   },
   "peerDependencies": {
-    "ol": "10.1.0"
+    "ol": ">=10.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.5",
@@ -73,7 +73,7 @@
     "html-webpack-plugin": "^5.6.0",
     "link": "^2.1.0",
     "mocha": "^10.2.0",
-    "ol": "10.1.0",
+    "ol": "10.2.0",
     "prettier": "^3.2.5",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.29.0",
