@@ -48,6 +48,8 @@
     "ol": ">=10.0.0 <10.3.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.11.0",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/chai": "^4.3.11",
     "@types/chai-spies": "^1.0.6",
@@ -69,6 +71,7 @@
     "eslint": "^9.8.0",
     "eslint-plugin-mocha": "^10.2.0",
     "gh-pages": "^6.1.1",
+    "globals": "^15.9.0",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.6.0",
     "link": "^2.1.0",
