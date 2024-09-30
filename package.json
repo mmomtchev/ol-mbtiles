@@ -59,7 +59,7 @@
     "@types/mocha": "^10.0.6",
     "@types/pako": "^2.0.3",
     "@types/pbf": "^3.0.5",
-    "@types/rbush": "^3.0.3",
+    "@types/rbush": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "@vue/preload-webpack-plugin": "^2.0.0",
