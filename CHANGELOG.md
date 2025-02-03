@@ -1,3 +1,7 @@
+# 3.2.0 2025-02-03
+
+ - Support OpenLayers 10.4
+ 
 # 3.2.0 2024-12-17
 
  - Support OpenLayers 10.3
