@@ -20,8 +20,8 @@
     "preversion": "npm run build && npm run lint && npm run test",
     "version": "git add package.json docs",
     "postversion": "git push && npm run build && git push --tags && npm run deploy:momtchev && npm run deploy:ghpages",
-    "lint": "eslint src/* test examples/*.{cj,t,mj}s examples/code/*",
-    "lint:fix": "eslint --fix src/* test examples/*.{cj,t,mj}s examples/code/*"
+    "lint": "eslint src/* test 'examples/*.{cj,t,mj}s' 'examples/code/*'",
+    "lint:fix": "eslint --fix src/* test 'examples/*.{cj,t,mj}s' 'examples/code/*'"
   },
   "repository": {
     "type": "git",
@@ -48,8 +48,8 @@
     "ol": "^10.4.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.11.0",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.19.0",
     "@rollup/plugin-typescript": "^12.1.0",
     "@types/chai": "^4.3.11",
     "@types/chai-spies": "^1.0.6",
@@ -71,7 +71,7 @@
     "eslint": "^9.8.0",
     "eslint-plugin-mocha": "^10.2.0",
     "gh-pages": "^6.1.1",
-    "globals": "^15.9.0",
+    "globals": "^15.14.0",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.6.0",
     "link": "^2.1.0",

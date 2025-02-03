@@ -13,18 +13,16 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default [{
-    ignores: ['test/XMLHttpRequest.cjs'],
-},
-...compat.extends(
+export default [...compat.extends(
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-).map(config => ({
+).map((config) => ({
     ...config,
     files: ['**/*.ts'],
-})),
-{
+})), {
+    files: ['**/*.ts'],
+
     plugins: {
         mocha,
     },
@@ -54,28 +52,13 @@ export default [{
         semi: ['error', 'always'],
         'mocha/no-exclusive-tests': 'error',
     },
-
-    files: ['**/*.ts'],
-},
-...compat.extends('eslint:recommended').map(config => ({
+}, ...compat.extends('eslint:recommended').map(config => ({
     ...config,
     files: ['**/*.js', '**/*.cjs'],
-})),
-{
-    files: ['test/*.ts'],
+})), {
+    files: ['**/*.js', '**/*.cjs'],
 
     rules: {
-        '@typescript-eslint/no-unused-expressions': 'off',
-    },
-},
-{
-    files: ['**/*.cjs'],
-
-    languageOptions: {
-        sourceType: 'commonjs',
-    },
-
-    rules: {
-        '@typescript-eslint/no-require-imports': 'off'
+        '@typescript-eslint/no-var-requires': 'off',
     },
 }];

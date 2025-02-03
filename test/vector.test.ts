@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { MBTilesFormat, MBTilesVectorSource } from '../src/index.js';
 import { VectorTile } from 'ol';
 import { get as getProjection, Projection } from 'ol/proj.js';
