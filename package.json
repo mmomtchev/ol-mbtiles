@@ -71,7 +71,7 @@
     "eslint": "^9.8.0",
     "eslint-plugin-mocha": "^10.2.0",
     "gh-pages": "^6.1.1",
-    "globals": "^15.14.0",
+    "globals": "^16.0.0",
     "html-loader": "^5.0.0",
     "html-webpack-plugin": "^5.6.0",
     "link": "^2.1.0",
