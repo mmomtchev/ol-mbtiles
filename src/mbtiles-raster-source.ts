@@ -64,7 +64,7 @@ export class MBTilesRasterSource extends ImageTileSource {
       .then((r) => {
         if (r && r[0]) {
           if (r[0].row[0] instanceof Uint8Array) {
-            const blob = new Blob([r[0].row[0] as Uint8Array], { type: this.mime });
+            const blob = new Blob([r[0].row[0] as Uint8Array<ArrayBuffer>], { type: this.mime });
             const imageUrl = URL.createObjectURL(blob);
             image.src = imageUrl;
             return;
