@@ -17,7 +17,7 @@ jobs:
         ol-version: [10.0.0, 10.1.0, 10.2.0, 10.3.0, 10.3.1, 10.4.0]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -38,7 +38,7 @@ jobs:
         ol-version: [10.4.0]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Use Node.js 18.x
       uses: actions/setup-node@v4
       with:
