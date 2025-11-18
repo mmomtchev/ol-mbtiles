@@ -13,8 +13,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
-        ol-version: [10.0.0, 10.1.0, 10.2.0, 10.3.0, 10.3.1, 10.4.0]
+        node-version: [24.x]
+        ol-version: 
+          - 10.0.0
+          - 10.1.0
+          - 10.2.0
+          - 10.3.0
+          - 10.3.1
+          - 10.4.0
+          - 10.5.0
+          - 10.6.0
+          - 10.7.0
 
     steps:
     - uses: actions/checkout@v5
@@ -34,15 +43,15 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]
-        ol-version: [10.4.0]
+        node-version: [24.x]
+        ol-version: [10.7.0]
 
     steps:
     - uses: actions/checkout@v5
-    - name: Use Node.js 18.x
+    - name: Use Node.js 24.x
       uses: actions/setup-node@v6
       with:
-        node-version: 18.x
+        node-version: 24.x
     - run: npm ci
     - run: npm run build
     - run: npm run c8
