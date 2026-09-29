@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { MBTilesFormat, MBTilesVectorSource } from '../src/index.js';
+import { MBTilesFormat, MBTilesVectorSource } from 'ol-mbtiles';
 import { VectorTile } from 'ol';
 import { get as getProjection, Projection } from 'ol/proj.js';
 import TileState from 'ol/TileState.js';

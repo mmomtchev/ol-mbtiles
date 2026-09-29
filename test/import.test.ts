@@ -1,4 +1,4 @@
-import { importMBTiles } from '../dist/index.js';
+import { importMBTiles } from 'ol-mbtiles';
 
 import { assert } from 'chai';
 
