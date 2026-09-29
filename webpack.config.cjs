@@ -21,6 +21,9 @@ module.exports = (env, argv) => ({
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    extensionAlias: {
+      '.js': ['.js', '.ts'],
+    },
     plugins: [new TsconfigPathsPlugin()]
   },
   output: {
