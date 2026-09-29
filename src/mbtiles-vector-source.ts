@@ -4,7 +4,7 @@ import VectorTileSource from 'ol/source/VectorTile.js';
 import VectorTile from 'ol/VectorTile.js';
 import { TileCoord } from 'ol/tilecoord.js';
 import { FeatureLike } from 'ol/Feature.js';
-import Tile from 'ol/Tile';
+import Tile from 'ol/Tile.js';
 import RenderFeature from 'ol/render/Feature.js';
 
 import { httpPoolOptions, MBTilesVectorOptions, SQLOptions } from './mbtiles.js';

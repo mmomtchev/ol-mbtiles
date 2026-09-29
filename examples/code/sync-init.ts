@@ -1,14 +1,14 @@
 import Map from 'ol/Map.js';
 import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM';
+import OSM from 'ol/source/OSM.js';
 import View from 'ol/View.js';
-import ImageTileLayer from 'ol/layer/Tile';
-import TileDebug from 'ol/source/TileDebug';
-import { fromLonLat, get as getProjection } from 'ol/proj';
-import { Extent, getWidth } from 'ol/extent';
+import ImageTileLayer from 'ol/layer/Tile.js';
+import TileDebug from 'ol/source/TileDebug.js';
+import { fromLonLat, get as getProjection } from 'ol/proj.js';
+import { Extent, getWidth } from 'ol/extent.js';
 
 import { MBTilesRasterSource } from 'ol-mbtiles';
-import TileGrid from 'ol/tilegrid/TileGrid';
+import TileGrid from 'ol/tilegrid/TileGrid.js';
 
 const projExtent = getProjection('EPSG:3857')?.getExtent() as Extent;
 const baseResolution = getWidth(projExtent) / 256;

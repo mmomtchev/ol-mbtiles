@@ -1,10 +1,10 @@
 import Map from 'ol/Map.js';
 import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM';
+import OSM from 'ol/source/OSM.js';
 import View from 'ol/View.js';
-import ImageTileLayer from 'ol/layer/Tile';
-import TileDebug from 'ol/source/TileDebug';
-import { fromLonLat } from 'ol/proj';
+import ImageTileLayer from 'ol/layer/Tile.js';
+import TileDebug from 'ol/source/TileDebug.js';
+import { fromLonLat } from 'ol/proj.js';
 
 import { importMBTiles, MBTilesRasterSource } from 'ol-mbtiles';
 

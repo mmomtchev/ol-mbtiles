@@ -10,8 +10,6 @@ export default [
     },
     plugins: [
       typescript({
-        module: 'es6',
-        target: 'es6',
         declaration: true,
         outDir: './dist',
         rootDir: './src'
