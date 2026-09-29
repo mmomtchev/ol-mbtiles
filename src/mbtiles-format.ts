@@ -1,6 +1,6 @@
-import Protobuf from 'pbf';
+import { PbfReader } from 'pbf';
 import { VectorTile, VectorTileFeature } from '@mapbox/vector-tile';
-import pako from 'pako';
+import * as pako from 'pako';
 
 import FeatureFormat, { ReadOptions } from 'ol/format/Feature.js';
 import Projection from 'ol/proj/Projection.js';
@@ -63,7 +63,7 @@ export class MBTilesFormat<F extends FeatureLike = RenderFeature> extends Featur
   readFeature(source: VectorTileFeature, options?: ReadOptions): F {
     const properties = source.properties;
 
-    let id: string | number;
+    let id: string | number | undefined;
     if (!this.idProperty_) {
       id = source.id;
     } else {
@@ -98,7 +98,7 @@ export class MBTilesFormat<F extends FeatureLike = RenderFeature> extends Featur
     const layers = this.layers_;
 
     const features: F[] = [];
-    const tile = new VectorTile(new Protobuf(pako.ungzip(source)));
+    const tile = new VectorTile(new PbfReader(pako.ungzip(source)));
     options = this.adaptOptions(options);
     const dataProjection = getProjection(options?.dataProjection);
     const extent = options?.extent;
