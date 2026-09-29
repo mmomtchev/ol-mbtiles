@@ -1,14 +1,14 @@
 import Map from 'ol/Map.js';
 import TileLayer from 'ol/layer/Tile.js';
 import View from 'ol/View.js';
-import VectorTileLayer from 'ol/layer/VectorTile';
-import TileDebug from 'ol/source/TileDebug';
-import { fromLonLat } from 'ol/proj';
-import Style from 'ol/style/Style';
-import { FeatureLike } from 'ol/Feature';
+import VectorTileLayer from 'ol/layer/VectorTile.js';
+import TileDebug from 'ol/source/TileDebug.js';
+import { fromLonLat } from 'ol/proj.js';
+import Style from 'ol/style/Style.js';
+import { FeatureLike } from 'ol/Feature.js';
 
 import { importMBTiles, MBTilesVectorSource } from 'ol-mbtiles';
-import { waterStyle, roadStyle, buildingStyle, boundaryStyle, placeStyle } from '../style';
+import { waterStyle, roadStyle, buildingStyle, boundaryStyle, placeStyle } from '../style.js';
 
 // MBTiles from
 // https://data.maptiler.com/downloads/dataset/osm/europe/

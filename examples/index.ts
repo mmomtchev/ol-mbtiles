@@ -2,7 +2,7 @@ import 'ol/ol.css';
 import './style.css';
 import 'prism-themes/themes/prism-vsc-dark-plus.css';
 import { Map } from 'ol';
-import Layer from 'ol/layer/Layer';
+import Layer from 'ol/layer/Layer.js';
 import pkgJson from '../package.json';
 import pkgLockJson from '../package-lock.json';
 

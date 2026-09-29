@@ -1,5 +1,5 @@
-import { FeatureLike } from 'ol/Feature';
-import { Style, Text, Fill, Stroke, Circle } from 'ol/style';
+import { FeatureLike } from 'ol/Feature.js';
+import { Style, Text, Fill, Stroke, Circle } from 'ol/style.js';
 
 export function styleTown(size: number, feature: FeatureLike): Style {
   let width: number;

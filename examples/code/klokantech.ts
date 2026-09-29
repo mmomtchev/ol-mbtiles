@@ -2,12 +2,12 @@ import Map from 'ol/Map.js';
 import OSM from 'ol/source/OSM.js';
 import TileLayer from 'ol/layer/Tile.js';
 import View from 'ol/View.js';
-import VectorTileLayer from 'ol/layer/VectorTile';
-import TileDebug from 'ol/source/TileDebug';
-import { fromLonLat } from 'ol/proj';
+import VectorTileLayer from 'ol/layer/VectorTile.js';
+import TileDebug from 'ol/source/TileDebug.js';
+import { fromLonLat } from 'ol/proj.js';
 
 import { importMBTiles, MBTilesVectorSource } from 'ol-mbtiles';
-import { styleBorder } from '../style';
+import { styleBorder } from '../style.js';
 
 // MBTiles from
 // https://github.com/klokantech/vector-tiles-sample
