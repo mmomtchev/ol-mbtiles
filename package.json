@@ -5,6 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
     "start": "webpack serve --mode development",
     "build:examples": "webpack --mode production",
@@ -15,7 +21,7 @@
     "deploy:momtchev": "tar -C docs/examples -zcf - `ls docs/examples` | mbuffer | ssh ol-mbtiles@orel.garga.net 'cat - | mbuffer | tar -C www -zxvf -'",
     "c8": "node_modules/.bin/c8 mocha",
     "lcov": "node_modules/.bin/c8 report --reporter=text-lcov > coverage/tests.lcov",
-    "test": "mocha",
+    "test": "npx tsc --noEmit && npx mocha",
     "prepare": "npm run build",
     "preversion": "npm run build && npm run lint && npm run test",
     "version": "git add package.json docs",
@@ -83,9 +89,8 @@
     "rollup": "^4.9.6",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.4.3",
     "web-worker": "github:mmomtchev/web-worker#workerglobalscope",
     "webpack": "^5.89.0",
